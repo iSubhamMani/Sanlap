@@ -19,7 +19,7 @@ export default function AuthProvider({
     onAuthStateChanged(auth, (user) => {
       if (user) {
         dispatcher(setUser(user));
-        router.replace("/dashboard");
+        router.replace("/chats");
       } else {
         dispatcher(removeUser());
         router.replace("/login");
