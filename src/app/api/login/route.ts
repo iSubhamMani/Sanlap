@@ -1,5 +1,7 @@
 import { connectDB } from "@/lib/db";
 import { UserModel } from "@/models/user.model";
+import { ApiError } from "@/utils/ApiError";
+import { ApiSuccess } from "@/utils/ApiSuccess";
 import { Document } from "mongoose";
 
 type CustomRequest = {
@@ -17,26 +19,16 @@ export async function POST(req: Request) {
       (await req.json()) as CustomRequest;
 
     if (!email || !displayName || !_id || !photoURL) {
-      return Response.json(
-        {
-          success: false,
-          message: "Missing required fields",
-        },
-        {
-          status: 400,
-        }
-      );
+      return Response.json(new ApiError(400, "Missing required fields"), {
+        status: 400,
+      });
     }
 
     const exisitingUser = await UserModel.findOne({ email });
 
     if (exisitingUser) {
       return Response.json(
-        {
-          success: true,
-          message: "User already exists",
-          data: exisitingUser,
-        },
+        new ApiSuccess(200, "User already exists", exisitingUser),
         {
           status: 200,
         }
@@ -55,32 +47,18 @@ export async function POST(req: Request) {
     const createdUser: Document = await user.save();
 
     if (!createdUser) {
-      return Response.json(
-        {
-          success: false,
-          message: "Failed to create user",
-        },
-        {
-          status: 500,
-        }
-      );
+      return Response.json(new ApiError(500, "Error creating user"), {
+        status: 500,
+      });
     }
 
-    return Response.json({
-      message: "User created successfully",
-      success: true,
-      data: createdUser,
-    });
-  } catch (error: any) {
     return Response.json(
-      {
-        success: false,
-        message: "Error creating user",
-        error: error.message,
-      },
-      {
-        status: 500,
-      }
+      new ApiSuccess(201, "User created successfully", createdUser),
+      { status: 201 }
     );
+  } catch (error: any) {
+    return Response.json(new ApiError(500, error.message), {
+      status: 500,
+    });
   }
 }
