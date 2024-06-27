@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import axios from "axios";
 import { UserInfo } from "@/lib/features/user/userSlice";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 const SearchedUser = ({
   user,
@@ -28,7 +28,7 @@ const SearchedUser = ({
   useEffect(() => {
     if (!currentUser || !user) return;
 
-    const checkInvitation = async () => {
+    const checkInvitationStatus = async () => {
       try {
         const response = await axios.get(
           `/api/check-invitation/${currentUser?.uid}?recipient=${user._id}`
@@ -42,7 +42,7 @@ const SearchedUser = ({
       }
     };
 
-    checkInvitation();
+    checkInvitationStatus();
   }, [currentUser, user]);
 
   const sendInvitation = async () => {
@@ -66,85 +66,84 @@ const SearchedUser = ({
     console.log("Cancel invitation");
   };
 
+  const inviteActions = useMemo(() => {
+    switch (inviteStatus) {
+      case "pending":
+        return { actionText: "Cancel", actionFunction: cancelInvitation };
+      case "accepted":
+        return { actionText: "Accepted", actionFunction: undefined };
+      default:
+        return { actionText: "Invite", actionFunction: sendInvitation };
+    }
+  }, [inviteStatus]);
+
+  if (!inviteStatus || !currentUser || !user) return null;
+
   return (
-    inviteStatus &&
-    currentUser &&
-    user && (
-      <div className="my-8">
-        <AlertDialog>
-          <AlertDialogTrigger className="w-full">
-            <div className="py-2 flex justify-between items-center gap-3 cursor-pointer rounded-sm">
-              <div className="flex items-center gap-3">
-                <Avatar>
-                  <AvatarImage src={user?.photoURL} />
-                  <AvatarFallback>
-                    <UserRound />
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex flex-col items-start">
-                  <p className="text-base font-medium">{user?.displayName}</p>
-                  <p className="text-xs font-light">{user?.email}</p>
-                </div>
-              </div>
-              <div className="">
-                <span
-                  className={`text-sm font-medium ${
-                    inviteStatus === "pending"
-                      ? "text-red-500"
-                      : inviteStatus === "accepted"
-                      ? "text-green-500"
-                      : "text-primary"
-                  }`}
-                >
-                  {inviteStatus === "pending"
-                    ? "Cancel"
-                    : inviteStatus === "accepted"
-                    ? "Accepted"
-                    : "Invite"}
-                </span>
+    <div className="my-8">
+      <AlertDialog>
+        <AlertDialogTrigger className="w-full">
+          <div className="py-2 flex justify-between items-center gap-3 cursor-pointer rounded-sm">
+            <div className="flex items-center gap-3">
+              <Avatar>
+                <AvatarImage src={user?.photoURL} />
+                <AvatarFallback>
+                  <UserRound />
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex flex-col items-start">
+                <p className="text-base font-medium">{user?.displayName}</p>
+                <p className="text-xs font-light">{user?.email}</p>
               </div>
             </div>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>
-                {inviteStatus === "pending"
-                  ? "Cancel Invite"
-                  : inviteStatus === "accepted"
-                  ? "Accepted"
-                  : "Send an Invite"}
-              </AlertDialogTitle>
-              <AlertDialogDescription>
-                {inviteStatus === "pending"
-                  ? `This will cancel the invitation sent to ${user?.displayName}`
-                  : inviteStatus === "accepted"
-                  ? `${user.displayName} has already accepted the invitation`
-                  : `This will send an invite to ${user?.displayName} to join the conversation`}
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            {(inviteStatus === "pending" || inviteStatus === "unsent") && (
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={
-                    inviteStatus === "pending"
-                      ? cancelInvitation
-                      : sendInvitation
-                  }
-                >
-                  Yes
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            )}
-            {inviteStatus === "accepted" && (
-              <AlertDialogFooter>
-                <AlertDialogAction>OK</AlertDialogAction>
-              </AlertDialogFooter>
-            )}
-          </AlertDialogContent>
-        </AlertDialog>
-      </div>
-    )
+            <div className="">
+              <span
+                className={`text-sm font-medium ${
+                  inviteStatus === "pending"
+                    ? "text-red-500"
+                    : inviteStatus === "accepted"
+                    ? "text-green-500"
+                    : "text-primary"
+                }`}
+              >
+                {inviteActions.actionText}
+              </span>
+            </div>
+          </div>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {inviteStatus === "pending"
+                ? "Cancel Invite"
+                : inviteStatus === "accepted"
+                ? "Accepted"
+                : "Send an Invite"}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {inviteStatus === "pending"
+                ? `This will cancel the invitation sent to ${user?.displayName}`
+                : inviteStatus === "accepted"
+                ? `${user.displayName} has already accepted the invitation`
+                : `This will send an invite to ${user?.displayName} to join the conversation`}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          {(inviteStatus === "pending" || inviteStatus === "unsent") && (
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={inviteActions.actionFunction}>
+                Yes
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          )}
+          {inviteStatus === "accepted" && (
+            <AlertDialogFooter>
+              <AlertDialogAction>OK</AlertDialogAction>
+            </AlertDialogFooter>
+          )}
+        </AlertDialogContent>
+      </AlertDialog>
+    </div>
   );
 };
 
