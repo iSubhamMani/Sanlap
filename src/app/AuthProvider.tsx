@@ -18,7 +18,14 @@ export default function AuthProvider({
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        dispatcher(setUser(user));
+        dispatcher(
+          setUser({
+            uid: user.uid,
+            email: user.email,
+            displayName: user.displayName,
+            photoURL: user.photoURL,
+          })
+        );
         router.replace("/chats");
       } else {
         dispatcher(removeUser());
