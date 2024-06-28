@@ -5,15 +5,15 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { useAppSelector } from "@/lib/hooks";
-import { LogOut, Mail, SearchIcon, UserRound } from "lucide-react";
+import { LogOut, SearchIcon, UserRound } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { User } from "@/models/user.model";
 import Loader from "@/components/Loader";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import Invitation from "@/components/Invitation";
+
 import { debounce } from "lodash";
+import InvitationBox from "@/components/InvitationBox";
 
 const ChatsPage = () => {
   const { info } = useAppSelector((state) => state.user);
@@ -77,7 +77,7 @@ const ChatsPage = () => {
       </header>
       <main className="flex flex-1">
         <section className="w-1/3 pr-6">
-          <div className="sticky top-24">
+          <div className="sticky top-24 flex flex-col">
             <div className="relative max-w-[95%] flex-1">
               <SearchIcon className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
@@ -138,57 +138,7 @@ const ChatsPage = () => {
         </section>
         <section className="w-2/3 flex gap-6">
           <Separator orientation="vertical" />
-          <div className="w-full">
-            <h2 className="font-bold text-slate-500 text-3xl">Your chats</h2>
-            <div className="flex justify-between gap-6">
-              <div className="flex-1 flex flex-col gap-6">
-                <Invitation />
-                <Invitation />
-                <Invitation />
-                <Invitation />
-                <Invitation />
-                <Invitation />
-                <Invitation />
-                <Invitation />
-                <Invitation />
-                <Invitation />
-                <Invitation />
-                <Invitation />
-                <Invitation />
-                <Invitation />
-                <Invitation />
-                <Invitation />
-                <Invitation />
-                <Invitation />
-                <Invitation />
-                <Invitation />
-                <Invitation />
-                <Invitation />
-                <Invitation />
-                <Invitation />
-                <Invitation />
-                <Invitation />
-                <Invitation />
-                <Invitation />
-                <Invitation />
-              </div>
-              <div>
-                <Card className="sticky top-6">
-                  <CardHeader>
-                    <CardTitle className="text-xl flex gap-3 items-center">
-                      <span>Your Invitations</span>
-                      <Mail className="w-6 h-6" />
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="flex flex-col gap-6">
-                    <Invitation />
-                    <Invitation />
-                    <Invitation />
-                  </CardContent>
-                </Card>
-              </div>
-            </div>
-          </div>
+          <InvitationBox />
         </section>
       </main>
     </div>
