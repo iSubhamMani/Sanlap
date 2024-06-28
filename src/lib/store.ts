@@ -1,10 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
 import userSlice from "./features/user/userSlice";
+import invitationSlice from "./features/invitation/invitationSlice";
 
 export const makeStore = () => {
   return configureStore({
     reducer: {
       user: userSlice,
+      invitation: invitationSlice,
     },
   });
 };
