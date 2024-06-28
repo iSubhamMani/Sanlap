@@ -1,24 +1,65 @@
 import { UserRound } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
-import { User } from "@/models/user.model";
+import axios from "axios";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks";
+import {
+  CustomInvitation,
+  deleteInvitation,
+} from "@/lib/features/invitation/invitationSlice";
 
-const Invitation = ({ sender }: { sender: User }) => {
+interface InvitationCardProps {
+  invitation: CustomInvitation;
+}
+
+const Invitation: React.FC<InvitationCardProps> = ({ invitation }) => {
+  const dispatcher = useAppDispatch();
+
+  const acceptInvitation = async () => {
+    try {
+      const response = await axios.post("/api/accept-invitation", {
+        sender: invitation.sender._id,
+        recipient: invitation.recipient,
+      });
+
+      if (response.data.success) {
+        dispatcher(deleteInvitation(invitation._id));
+      }
+    } catch (error) {
+      console.log("Error rejecting invitation: ", error);
+    }
+  };
+
+  const rejectInvitation = async () => {
+    try {
+      const response = await axios.post("/api/reject-invitation", {
+        sender: invitation.sender._id,
+        recipient: invitation.recipient,
+      });
+
+      if (response.data?.success) {
+        dispatcher(deleteInvitation(invitation._id));
+      }
+    } catch (error) {
+      console.log("Error rejecting invitation: ", error);
+    }
+  };
+
   return (
     <div className="flex items-center justify-between gap-4">
       <div className="flex items-center gap-3">
         <Avatar>
-          <AvatarImage src={sender?.photoURL} />
+          <AvatarImage src={invitation.sender?.photoURL} />
           <AvatarFallback>
             <UserRound />
           </AvatarFallback>
         </Avatar>
         <div>
           <div className="font-medium text-sm line-clamp-1">
-            {sender?.displayName}
+            {invitation.sender?.displayName}
           </div>
           <div className="text-xs text-muted-foreground line-clamp-1">
-            {sender?.email}
+            {invitation.sender?.email}
           </div>
         </div>
       </div>
@@ -27,6 +68,7 @@ const Invitation = ({ sender }: { sender: User }) => {
           className="text-xs text-primary font-bold hover:text-primary"
           variant="outline"
           size="sm"
+          onClick={acceptInvitation}
         >
           Accept
         </Button>
@@ -34,6 +76,7 @@ const Invitation = ({ sender }: { sender: User }) => {
           className="text-xs font-bold text-red-500 hover:text-red-500"
           variant="ghost"
           size="sm"
+          onClick={rejectInvitation}
         >
           Reject
         </Button>
