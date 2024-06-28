@@ -1,7 +1,7 @@
 import { Invitation } from "@/models/invitation.model";
 import { createSlice } from "@reduxjs/toolkit";
 
-interface CustomInvitation extends Invitation {
+export interface CustomInvitation extends Invitation {
   sender: any;
 }
 
@@ -17,8 +17,11 @@ const invitationSlice = createSlice({
         state.invitations[invitation._id] = invitation;
       });
     },
+    deleteInvitation: (state, action) => {
+      delete state.invitations[action.payload as string];
+    },
   },
 });
 
-export const { setInvitations } = invitationSlice.actions;
+export const { setInvitations, deleteInvitation } = invitationSlice.actions;
 export default invitationSlice.reducer;
