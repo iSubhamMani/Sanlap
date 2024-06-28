@@ -5,49 +5,66 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { useAppSelector } from "@/lib/hooks";
-import { LogOut, SearchIcon, UserRound } from "lucide-react";
+import { LogOut, Mail, SearchIcon, UserRound } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { User } from "@/models/user.model";
 import Loader from "@/components/Loader";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import Invitation from "@/components/Invitation";
+import { debounce } from "lodash";
 
 const ChatsPage = () => {
   const { info } = useAppSelector((state) => state.user);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
-  const [searchLoading, setSearchLoading] = useState(false);
 
-  useEffect(() => {
-    if (!searchQuery.trim()) {
-      setSearchLoading(false);
-      setSearchResults([]);
-      return;
-    }
+  const [state, setState] = useState({
+    searchQuery: "",
+    searchResults: [],
+    searchLoading: false,
+  });
 
-    setSearchLoading(true);
-    const timer = setTimeout(() => {
-      searchUser();
-    }, 400);
-
-    return () => clearTimeout(timer);
-  }, [searchQuery]);
-
-  const searchUser = async () => {
+  const searchUser = useCallback(async () => {
     try {
       const response = await axios.get(
-        `/api/search/${info?.uid}?q=${searchQuery}`
+        `/api/search/${info?.uid}?q=${state.searchQuery}`
       );
 
       if (response.data?.success) {
-        setSearchResults(response.data.data);
+        setState((prevState) => ({
+          ...prevState,
+          searchResults: response.data.data,
+        }));
       }
     } catch (error) {
       console.log("Something went wrong: ", error);
     } finally {
-      setSearchLoading(false);
+      setState((prevState) => ({ ...prevState, searchLoading: false }));
     }
-  };
+  }, [info?.uid, state.searchQuery]);
+
+  const debouncedSearch = useMemo(
+    () => debounce(searchUser, 400),
+    [searchUser]
+  );
+
+  useEffect(() => {
+    if (!state.searchQuery.trim()) {
+      setState((prevState) => ({
+        ...prevState,
+        searchLoading: false,
+        searchResults: [],
+      }));
+      return;
+    }
+
+    setState((prevState) => ({ ...prevState, searchLoading: true }));
+    debouncedSearch();
+
+    return () => {
+      debouncedSearch.cancel();
+    };
+  }, [state.searchQuery, debouncedSearch]);
 
   return (
     <div className="min-h-[100dvh] flex flex-col px-6 md:px-16 pt-4 md:pt-6 pb-8">
@@ -67,19 +84,29 @@ const ChatsPage = () => {
                 type="search"
                 placeholder="Search users"
                 className="pl-9 h-9 w-full"
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) =>
+                  setState((prevState) => ({
+                    ...prevState,
+                    searchQuery: e.target.value,
+                  }))
+                }
               />
               <ScrollArea className="mt-6 mb-8 h-[600px] w-full">
                 <div className="pr-4">
-                  {searchLoading ? (
+                  {state.searchLoading ? (
                     <div className="mt-6 flex justify-center">
                       <Loader />
                     </div>
-                  ) : searchResults.length === 0 ? (
-                    searchQuery.trim() !== "" &&
-                    !searchLoading && <p>No users found</p>
+                  ) : state.searchResults.length === 0 ? (
+                    state.searchQuery.trim() !== "" &&
+                    !state.searchLoading && (
+                      <p className="text-gray-500 text-center">
+                        No users found for{" "}
+                        <span className="font-bold">{state.searchQuery}</span>
+                      </p>
+                    )
                   ) : (
-                    searchResults.map((user: User) => (
+                    state.searchResults.map((user: User) => (
                       <SearchedUser
                         key={user._id}
                         user={user}
@@ -113,9 +140,53 @@ const ChatsPage = () => {
           <Separator orientation="vertical" />
           <div className="w-full">
             <h2 className="font-bold text-slate-500 text-3xl">Your chats</h2>
-            <div className="flex justify-between">
-              <div className="flex-1"></div>
-              <div>Friend Requests</div>
+            <div className="flex justify-between gap-6">
+              <div className="flex-1 flex flex-col gap-6">
+                <Invitation />
+                <Invitation />
+                <Invitation />
+                <Invitation />
+                <Invitation />
+                <Invitation />
+                <Invitation />
+                <Invitation />
+                <Invitation />
+                <Invitation />
+                <Invitation />
+                <Invitation />
+                <Invitation />
+                <Invitation />
+                <Invitation />
+                <Invitation />
+                <Invitation />
+                <Invitation />
+                <Invitation />
+                <Invitation />
+                <Invitation />
+                <Invitation />
+                <Invitation />
+                <Invitation />
+                <Invitation />
+                <Invitation />
+                <Invitation />
+                <Invitation />
+                <Invitation />
+              </div>
+              <div>
+                <Card className="sticky top-6">
+                  <CardHeader>
+                    <CardTitle className="text-xl flex gap-3 items-center">
+                      <span>Your Invitations</span>
+                      <Mail className="w-6 h-6" />
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="flex flex-col gap-6">
+                    <Invitation />
+                    <Invitation />
+                    <Invitation />
+                  </CardContent>
+                </Card>
+              </div>
             </div>
           </div>
         </section>
