@@ -1,13 +1,8 @@
 import { connectDB } from "@/lib/db";
 import { InvitationModel } from "@/models/invitation.model";
+import { InvitationRequest } from "@/types/InvitationRequest";
 import { ApiError } from "@/utils/ApiError";
 import { ApiSuccess } from "@/utils/ApiSuccess";
-
-type InvitationRequest = {
-  sender?: string;
-  recipient?: string;
-  status?: string;
-};
 
 // create a new invitation
 export async function POST(req: Request) {
