@@ -100,7 +100,7 @@ const ChatsPage = () => {
                   ) : state.searchResults.length === 0 ? (
                     state.searchQuery.trim() !== "" &&
                     !state.searchLoading && (
-                      <p className="text-gray-500 text-center">
+                      <p className="text-slate-500 text-center">
                         No users found for{" "}
                         <span className="font-bold">{state.searchQuery}</span>
                       </p>
