@@ -29,10 +29,37 @@ export async function GET(req: Request, res: Response) {
                 { email: { $regex: searchQuery, $options: "i" } },
               ],
             },
+            { _id: { $ne: userId } },
+          ],
+        },
+      },
+      {
+        $lookup: {
+          from: "invitations",
+          let: { userId: "$_id", currentUserId: userId },
+          pipeline: [
             {
-              _id: { $ne: userId },
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$sender", "$$userId"] },
+                    { $eq: ["$recipient", "$$currentUserId"] },
+                  ],
+                },
+              },
             },
           ],
+          as: "invitations",
+        },
+      },
+      {
+        $match: {
+          invitations: { $eq: [] },
+        },
+      },
+      {
+        $project: {
+          invitations: 0,
         },
       },
     ]);
