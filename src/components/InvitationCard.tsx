@@ -1,21 +1,24 @@
 import { UserRound } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
+import { User } from "@/models/user.model";
 
-const Invitation = () => {
+const Invitation = ({ sender }: { sender: User }) => {
   return (
     <div className="flex items-center justify-between gap-4">
       <div className="flex items-center gap-3">
         <Avatar>
-          <AvatarImage src="/placeholder-user.jpg" />
+          <AvatarImage src={sender?.photoURL} />
           <AvatarFallback>
             <UserRound />
           </AvatarFallback>
         </Avatar>
         <div>
-          <div className="font-medium text-sm line-clamp-1">Sarah Anderson</div>
+          <div className="font-medium text-sm line-clamp-1">
+            {sender?.displayName}
+          </div>
           <div className="text-xs text-muted-foreground line-clamp-1">
-            example@gmail.com
+            {sender?.email}
           </div>
         </div>
       </div>
