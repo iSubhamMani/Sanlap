@@ -61,7 +61,7 @@ export async function GET(req: Request) {
 
     const invitations = await InvitationModel.aggregate([
       {
-        $match: { recipient: userId },
+        $match: { recipient: userId, status: "pending" },
       },
       {
         $lookup: {
