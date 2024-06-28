@@ -37,7 +37,6 @@ const InvitationBox = () => {
 
   return (
     <div className="w-full">
-      Your Invitations
       <h2 className="font-bold text-slate-500 text-3xl">Your chats</h2>
       <div className="flex justify-between gap-6">
         <div className="flex-1 flex flex-col gap-6"></div>
@@ -58,7 +57,7 @@ const InvitationBox = () => {
                 Object.entries(invitation.invitations).map(([, invitation]) => {
                   return (
                     <InvitationCard
-                      sender={invitation.sender}
+                      invitation={invitation}
                       key={invitation?._id as string}
                     />
                   );
