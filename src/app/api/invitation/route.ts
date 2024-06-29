@@ -1,11 +1,12 @@
 import { connectDB } from "@/lib/db";
+import { CustomRequest } from "@/middleware";
 import { InvitationModel } from "@/models/invitation.model";
 import { InvitationRequest } from "@/types/InvitationRequest";
 import { ApiError } from "@/utils/ApiError";
 import { ApiSuccess } from "@/utils/ApiSuccess";
 
 // create a new invitation
-export async function POST(req: Request) {
+export async function POST(req: CustomRequest) {
   await connectDB();
 
   try {
@@ -41,12 +42,11 @@ export async function POST(req: Request) {
   }
 }
 
-export async function GET(req: Request) {
+export async function GET(req: CustomRequest) {
   await connectDB();
 
   try {
-    const url = new URL(req.url);
-    const userId = url.searchParams.get("userId");
+    const userId = req.headers.get("userId");
 
     if (!userId) {
       return Response.json(new ApiError(400, "User ID is required"), {

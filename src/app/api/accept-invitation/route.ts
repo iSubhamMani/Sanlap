@@ -1,11 +1,12 @@
 import { connectDB } from "@/lib/db";
+import { CustomRequest } from "@/middleware";
 import { ConversationModel } from "@/models/conversation.model";
 import { InvitationModel } from "@/models/invitation.model";
 import { InvitationRequest } from "@/types/InvitationRequest";
 import { ApiError } from "@/utils/ApiError";
 import { ApiSuccess } from "@/utils/ApiSuccess";
 
-export async function POST(req: Request) {
+export async function POST(req: CustomRequest) {
   await connectDB();
 
   try {
