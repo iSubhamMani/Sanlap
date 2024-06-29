@@ -26,9 +26,11 @@ const ChatsPage = () => {
 
   const searchUser = useCallback(async () => {
     try {
-      const response = await axios.get(
-        `/api/search/${info?.uid}?q=${state.searchQuery}`
-      );
+      const response = await axios.get(`/api/search?q=${state.searchQuery}`, {
+        headers: {
+          Authorization: `${localStorage.getItem("token")}`,
+        },
+      });
 
       if (response.data?.success) {
         setState((prevState) => ({
@@ -41,7 +43,7 @@ const ChatsPage = () => {
     } finally {
       setState((prevState) => ({ ...prevState, searchLoading: false }));
     }
-  }, [info?.uid, state.searchQuery]);
+  }, [state.searchQuery]);
 
   const debouncedSearch = useMemo(
     () => debounce(searchUser, 400),
