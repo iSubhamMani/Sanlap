@@ -8,8 +8,14 @@ export async function GET(req: Request, res: Response) {
 
   try {
     const url = new URL(req.url);
-    const userId = url.pathname.split("/")[3];
+    const userId = req.headers.get("userId");
     const searchQuery = url.searchParams.get("q");
+
+    if (!userId) {
+      return Response.json(new ApiError(400, "User ID is required"), {
+        status: 400,
+      });
+    }
 
     if (!searchQuery) {
       return Response.json(new ApiError(400, "Missing search query"), {

@@ -1,15 +1,22 @@
 import { connectDB } from "@/lib/db";
+import { CustomRequest } from "@/middleware";
 import { InvitationModel } from "@/models/invitation.model";
 import { ApiError } from "@/utils/ApiError";
 import { ApiSuccess } from "@/utils/ApiSuccess";
 
-export async function GET(req: Request) {
+export async function GET(req: CustomRequest) {
   await connectDB();
 
   try {
     const url = new URL(req.url);
-    const userId = url.pathname.split("/")[3];
+    const userId = req.headers.get("userId");
     const recipient = url.searchParams.get("recipient");
+
+    if (!userId) {
+      return Response.json(new ApiError(400, "User ID is required"), {
+        status: 400,
+      });
+    }
 
     if (!recipient) {
       return Response.json(new ApiError(400, "Missing recipient"), {
