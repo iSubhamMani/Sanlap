@@ -31,7 +31,12 @@ const SearchedUser = ({
     const checkInvitationStatus = async () => {
       try {
         const response = await axios.get(
-          `/api/check-invitation/${currentUser?.uid}?recipient=${user._id}`
+          `/api/check-invitation?recipient=${user._id}`,
+          {
+            headers: {
+              Authorization: `${localStorage.getItem("token")}`,
+            },
+          }
         );
 
         if (response.data?.success) {
@@ -48,10 +53,18 @@ const SearchedUser = ({
   const sendInvitation = async () => {
     // send invitation to the user
     try {
-      const response = await axios.post("/api/invitation", {
-        sender: currentUser?.uid,
-        recipient: user._id,
-      });
+      const response = await axios.post(
+        "/api/invitation",
+        {
+          sender: currentUser?.uid,
+          recipient: user._id,
+        },
+        {
+          headers: {
+            Authorization: `${localStorage.getItem("token")}`,
+          },
+        }
+      );
 
       if (response.data?.success) {
         setInviteStatus("pending");

@@ -8,7 +8,8 @@ import { setInvitations } from "@/lib/features/invitation/invitationSlice";
 import Loader from "./Loader";
 
 const InvitationBox = () => {
-  const { user, invitation } = useAppSelector((state) => state);
+  const invitation = useAppSelector((state) => state.invitation);
+  const user = useAppSelector((state) => state.user);
   const dispatcher = useAppDispatch();
 
   const [loading, setLoading] = useState(true);
@@ -16,9 +17,11 @@ const InvitationBox = () => {
   const getAllInvitations = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await axios.get(
-        `/api/invitation?userId=${user.info?.uid}`
-      );
+      const response = await axios.get(`/api/invitation`, {
+        headers: {
+          Authorization: `${localStorage.getItem("token")}`,
+        },
+      });
 
       if (response.data?.success) {
         dispatcher(setInvitations(response.data.data));
@@ -28,7 +31,7 @@ const InvitationBox = () => {
     } finally {
       setLoading(false);
     }
-  }, [dispatcher, user.info?.uid]);
+  }, [dispatcher]);
 
   useEffect(() => {
     if (!user.info) return;

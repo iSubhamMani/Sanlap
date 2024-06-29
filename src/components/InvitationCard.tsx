@@ -17,10 +17,18 @@ const Invitation: React.FC<InvitationCardProps> = ({ invitation }) => {
 
   const acceptInvitation = async () => {
     try {
-      const response = await axios.post("/api/accept-invitation", {
-        sender: invitation.sender._id,
-        recipient: invitation.recipient,
-      });
+      const response = await axios.post(
+        "/api/accept-invitation",
+        {
+          sender: invitation.sender._id,
+          recipient: invitation.recipient,
+        },
+        {
+          headers: {
+            Authorization: `${localStorage.getItem("token")}`,
+          },
+        }
+      );
 
       if (response.data.success) {
         dispatcher(deleteInvitation(invitation._id));
@@ -32,10 +40,18 @@ const Invitation: React.FC<InvitationCardProps> = ({ invitation }) => {
 
   const rejectInvitation = async () => {
     try {
-      const response = await axios.post("/api/reject-invitation", {
-        sender: invitation.sender._id,
-        recipient: invitation.recipient,
-      });
+      const response = await axios.post(
+        "/api/reject-invitation",
+        {
+          sender: invitation.sender._id,
+          recipient: invitation.recipient,
+        },
+        {
+          headers: {
+            Authorization: `${localStorage.getItem("token")}`,
+          },
+        }
+      );
 
       if (response.data?.success) {
         dispatcher(deleteInvitation(invitation._id));
