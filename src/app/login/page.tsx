@@ -18,10 +18,10 @@ export default function LoginPage() {
   const signInWithGoogle = () => {
     const provider = new GoogleAuthProvider();
     signInWithPopup(auth, provider)
-      .then((result) => {
+      .then(async (result) => {
         const user = result.user;
 
-        saveUserToDB({
+        await saveUserToDB({
           _id: user.uid,
           email: user.email,
           displayName: user.displayName,
@@ -35,12 +35,16 @@ export default function LoginPage() {
 
   async function saveUserToDB(user: User) {
     try {
-      await axios.post("/api/login", {
+      const response = await axios.post("/api/login", {
         _id: user._id,
         email: user.email,
         displayName: user.displayName,
         photoURL: user.photoURL,
       });
+
+      if (response.data?.success) {
+        localStorage.setItem("token", response.data?.data.token);
+      }
     } catch (error: any) {
       setError(error.message);
     }

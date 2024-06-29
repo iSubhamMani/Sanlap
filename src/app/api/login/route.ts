@@ -3,6 +3,8 @@ import { UserModel } from "@/models/user.model";
 import { ApiError } from "@/utils/ApiError";
 import { ApiSuccess } from "@/utils/ApiSuccess";
 import { Document } from "mongoose";
+import { SignJWT } from "jose";
+import secretKey from "@/utils/encodeJWT";
 
 type CustomRequest = {
   _id?: string;
@@ -27,8 +29,12 @@ export async function POST(req: Request) {
     const exisitingUser = await UserModel.findOne({ email });
 
     if (exisitingUser) {
+      const token = await new SignJWT({ _id: exisitingUser._id })
+        .setProtectedHeader({ alg: "HS256" })
+        .sign(secretKey);
+
       return Response.json(
-        new ApiSuccess(200, "User already exists", exisitingUser),
+        new ApiSuccess(200, "User already exists", { exisitingUser, token }),
         {
           status: 200,
         }
@@ -52,8 +58,12 @@ export async function POST(req: Request) {
       });
     }
 
+    const token = await new SignJWT({ _id: createdUser._id })
+      .setProtectedHeader({ alg: "HS256" })
+      .sign(secretKey);
+
     return Response.json(
-      new ApiSuccess(201, "User created successfully", createdUser),
+      new ApiSuccess(201, "User created successfully", { createdUser, token }),
       { status: 201 }
     );
   } catch (error: any) {
