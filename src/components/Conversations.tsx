@@ -36,13 +36,21 @@ const Conversations = () => {
 
   return (
     <div className="flex-1 flex flex-col">
-      {conversations?.map((conversation: Conversation) => (
-        <ChatUser
-          key={conversation._id}
-          currentUser={info}
-          conversation={conversation}
-        />
-      ))}
+      {conversations.length === 0 ? (
+        <div>
+          <p className="text-slate-500 text-xl text-center mt-16 text-balance">
+            No conversations found. Start by searching for a user to chat with.
+          </p>
+        </div>
+      ) : (
+        conversations?.map((conversation: Conversation) => (
+          <ChatUser
+            key={conversation._id}
+            currentUser={info}
+            conversation={conversation}
+          />
+        ))
+      )}
     </div>
   );
 };
