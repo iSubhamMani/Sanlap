@@ -3,10 +3,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { ApiError } from "./utils/ApiError";
 import secretKey from "./utils/encodeJWT";
 
-export interface CustomRequest extends NextRequest {
-  userId: string;
-}
-
 export async function middleware(req: NextRequest) {
   try {
     const token = req.headers.get("Authorization") || "";
