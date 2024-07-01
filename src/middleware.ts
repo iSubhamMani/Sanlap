@@ -38,5 +38,6 @@ export const config = {
     "/api/invitations",
     "/api/conversations",
     "/api/search",
+    "/api/chat-details/:path*",
   ],
 };
