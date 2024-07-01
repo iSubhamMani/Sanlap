@@ -1,12 +1,18 @@
 import mongoose, { Schema } from "mongoose";
 
-export interface Conversation {
-  participants: string[];
+interface Conversation {
+  members: string[];
+  lastMessageAt: Date;
+  name?: string;
+  profilePicture?: string;
 }
 
 const conversationSchema: Schema<Conversation> = new Schema<Conversation>(
   {
-    participants: [{ type: Schema.Types.String, ref: "User", required: true }],
+    members: [{ type: Schema.Types.String, ref: "User", required: true }],
+    lastMessageAt: { type: Date, required: true, default: Date.now() },
+    name: { type: String, default: "" },
+    profilePicture: { type: String, default: "" },
   },
   { timestamps: true }
 );
