@@ -54,7 +54,7 @@ const SearchedUser = ({
     // send invitation to the user
     try {
       const response = await axios.post(
-        "/api/invitation",
+        "/api/invitations",
         {
           sender: currentUser?.uid,
           recipient: user._id,
