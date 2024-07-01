@@ -14,7 +14,6 @@ import Loader from "@/components/Loader";
 
 import { debounce } from "lodash";
 import InvitationBox from "@/components/InvitationBox";
-import ChatUser from "@/components/ChatUser";
 import Conversations from "@/components/Conversations";
 
 const ChatsPage = () => {
