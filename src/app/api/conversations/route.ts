@@ -16,12 +16,19 @@ export async function GET(req: CustomRequest) {
       });
     }
 
-    const allConversations = await ConversationModel.find({
-      members: { $in: [userId] },
-    })
-      .sort({ lastMessageAt: -1 })
-      .populate("members")
-      .exec();
+    const allConversations = await ConversationModel.aggregate([
+      {
+        $match: { members: { $in: [userId] } },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "members",
+          foreignField: "_id",
+          as: "members",
+        },
+      },
+    ]);
 
     return Response.json(new ApiSuccess(200, "Invitations", allConversations), {
       status: 200,

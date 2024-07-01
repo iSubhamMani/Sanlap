@@ -6,9 +6,7 @@ import { useAppSelector } from "@/lib/hooks";
 
 export interface Conversation {
   _id: string;
-  members: User[];
-  name?: string;
-  profilePic?: string;
+  members: [User];
   lastMessageAt: Date;
 }
 
@@ -29,6 +27,7 @@ const Conversations = () => {
       });
 
       if (response.data?.success) {
+        console.log("Conversations: ", response.data.data);
         setConversations(response.data.data);
       }
     } catch (error) {
