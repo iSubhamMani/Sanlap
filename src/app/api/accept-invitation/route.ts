@@ -30,9 +30,11 @@ export async function POST(req: CustomRequest) {
       });
     }
 
-    const newConversation = await ConversationModel.create({
-      participants: [sender, recipient],
+    const newConversation = new ConversationModel({
+      members: [sender, recipient],
     });
+
+    await newConversation.save();
 
     if (!newConversation) {
       return Response.json(new ApiError(500, "Error creating conversation"), {
