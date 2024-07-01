@@ -14,6 +14,8 @@ import Loader from "@/components/Loader";
 
 import { debounce } from "lodash";
 import InvitationBox from "@/components/InvitationBox";
+import ChatUser from "@/components/ChatUser";
+import Conversations from "@/components/Conversations";
 
 const ChatsPage = () => {
   const { info } = useAppSelector((state) => state.user);
@@ -79,7 +81,7 @@ const ChatsPage = () => {
       </header>
       <main className="flex flex-1">
         <section className="w-1/3 pr-6">
-          <div className="sticky top-24 flex flex-col">
+          <div className="sticky top-24 flex flex-col h-full">
             <div className="relative max-w-[95%] flex-1">
               <SearchIcon className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
@@ -140,7 +142,15 @@ const ChatsPage = () => {
         </section>
         <section className="w-2/3 flex gap-6">
           <Separator orientation="vertical" />
-          <InvitationBox />
+          <div className="w-full">
+            <h2 className="font-bold text-slate-500 text-3xl">
+              Your conversations
+            </h2>
+            <div className="flex justify-between gap-6">
+              <Conversations />
+              <InvitationBox />
+            </div>
+          </div>
         </section>
       </main>
     </div>
