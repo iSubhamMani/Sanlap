@@ -4,7 +4,6 @@ import { Conversation } from "@/components/Conversations";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Textarea } from "@/components/ui/textarea";
 import { useAppSelector } from "@/lib/hooks";
 import { User } from "@/models/user.model";
 import axios from "axios";
@@ -22,7 +21,6 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import languages from "@/utils/languages";
-import { Separator } from "@/components/ui/separator";
 import {
   Select,
   SelectContent,
@@ -32,6 +30,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import ChatInput from "@/components/ChatInput";
+import MessagesContainer from "@/components/MessagesContainer";
 
 export default function ChatDetails() {
   const { chatId } = useParams();
@@ -44,11 +44,14 @@ export default function ChatDetails() {
     if (!chatId) return;
 
     try {
-      const response = await axios.get(`/api/chat-details/${chatId}`, {
-        headers: {
-          Authorization: `${localStorage.getItem("token")}`,
-        },
-      });
+      const response = await axios.get(
+        `/api/chat-details/${chatId.toString()}`,
+        {
+          headers: {
+            Authorization: `${localStorage.getItem("token")}`,
+          },
+        }
+      );
       if (response.data?.success) {
         setChatDetails(response.data.data);
       }
@@ -100,11 +103,16 @@ export default function ChatDetails() {
                       Set your preferred language for this conversation
                     </DrawerDescription>
                   </DrawerHeader>
-                  <div className="p-4 pb-0 flex flex-col gap-3">
+                  <div className="p-4 pb-0 flex flex-col gap-6">
                     <Select defaultValue="english">
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Type in" />
-                      </SelectTrigger>
+                      <div>
+                        <label className="font-bold text-sm" htmlFor="type-in">
+                          Type in
+                        </label>
+                        <SelectTrigger id="type-in" className="w-full mt-2">
+                          <SelectValue placeholder="Type in" />
+                        </SelectTrigger>
+                      </div>
                       <SelectContent>
                         <SelectGroup>
                           {languages.map((lang) => (
@@ -116,9 +124,17 @@ export default function ChatDetails() {
                       </SelectContent>
                     </Select>
                     <Select defaultValue="english">
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Receive in" />
-                      </SelectTrigger>
+                      <div>
+                        <label
+                          className="font-bold text-sm"
+                          htmlFor="receive-in"
+                        >
+                          Receive in
+                        </label>
+                        <SelectTrigger id="receive-in" className="w-full mt-2">
+                          <SelectValue placeholder="Receive in" />
+                        </SelectTrigger>
+                      </div>
                       <SelectContent>
                         <SelectGroup>
                           {languages.map((lang) => (
@@ -141,16 +157,14 @@ export default function ChatDetails() {
             </Drawer>
           </div>
         </div>
-        <ScrollArea className="flex-1"></ScrollArea>
-        <div className="flex items-center gap-2 border-t bg-card p-4">
-          <Textarea
-            placeholder="Type your message..."
-            className="h-10 flex-1 resize-none rounded-2xl border-none bg-muted px-4 text-sm focus:outline-none focus:ring-0"
-          />
-          <Button variant="ghost" size="icon" className="rounded-full">
-            <Send className="w-6 h-6 text-primary" />
-          </Button>
-        </div>
+        <ScrollArea className="flex-1">
+          <MessagesContainer conversationId={chatId.toString()} />
+        </ScrollArea>
+        <ChatInput
+          sender={info}
+          recipient={otherMember}
+          conversationId={chatId.toString()}
+        />
       </div>
     </div>
   );
