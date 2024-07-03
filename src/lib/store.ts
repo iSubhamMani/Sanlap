@@ -1,12 +1,18 @@
 import { configureStore } from "@reduxjs/toolkit";
 import userSlice from "./features/user/userSlice";
 import invitationSlice from "./features/invitation/invitationSlice";
+import invitationConfigSlice from "./features/invitation/invitationConfigSlice";
+import conversationsSlice from "./features/conversations/conversationsSlice";
+import conversationsConfigSlice from "./features/conversations/conversationsConfigSlice";
 
 export const makeStore = () => {
   return configureStore({
     reducer: {
       user: userSlice,
       invitation: invitationSlice,
+      invitationConfig: invitationConfigSlice,
+      conversations: conversationsSlice,
+      conversationsConfig: conversationsConfigSlice,
     },
   });
 };
