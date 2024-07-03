@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from "react";
 import { Textarea } from "./ui/textarea";
 import { Button } from "./ui/button";
@@ -47,7 +49,7 @@ const ChatInput = ({
   };
 
   return (
-    <div className="flex items-center gap-2 border-t bg-card p-4">
+    <div className="sticky bottom-0 flex items-center gap-2 border-t bg-card p-4">
       <Textarea
         value={message}
         onChange={(e) => setMessage(e.target.value)}
