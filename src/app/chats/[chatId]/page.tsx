@@ -3,7 +3,7 @@
 import { Conversation } from "@/components/Conversations";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
+
 import { useAppSelector } from "@/lib/hooks";
 import { User } from "@/models/user.model";
 import axios from "axios";
@@ -76,7 +76,7 @@ export default function ChatDetails() {
   return (
     <div className="w-full rounded-lg bg-background ">
       <div className="mx-auto w-full max-w-3xl min-h-[100dvh] flex flex-col shadow-lg">
-        <div className="flex items-center justify-between border-b bg-card px-6 py-4">
+        <div className="z-50 sticky top-0 flex items-center justify-between border-b bg-card px-6 py-4">
           <div className="flex items-center gap-3">
             <ArrowLeft
               className="cursor-pointer"
@@ -157,9 +157,7 @@ export default function ChatDetails() {
             </Drawer>
           </div>
         </div>
-        <ScrollArea className="flex-1">
-          <MessagesContainer conversationId={chatId.toString()} />
-        </ScrollArea>
+        <MessagesContainer conversationId={chatId.toString()} />
         <ChatInput
           sender={info}
           recipient={otherMember}
