@@ -23,10 +23,12 @@ const messageSchema: Schema<Message> = new Schema<Message>(
     },
     sender: {
       type: String,
+      ref: "User",
       required: true,
     },
     recipient: {
       type: String,
+      ref: "User",
       required: true,
     },
   },
