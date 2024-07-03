@@ -1,3 +1,5 @@
+"use client";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import InvitationCard from "@/components/InvitationCard";
 import { Mail } from "lucide-react";
@@ -6,13 +8,17 @@ import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { useCallback, useEffect, useState } from "react";
 import { setInvitations } from "@/lib/features/invitation/invitationSlice";
 import Loader from "./Loader";
+import { setHasMoreInvitations } from "@/lib/features/invitation/invitationConfigSlice";
 
 const InvitationBox = () => {
   const invitation = useAppSelector((state) => state.invitation);
+  const { hasMoreInvitations } = useAppSelector(
+    (state) => state.invitationConfig
+  );
   const user = useAppSelector((state) => state.user);
   const dispatcher = useAppDispatch();
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const getAllInvitations = useCallback(async () => {
     setLoading(true);
@@ -25,6 +31,7 @@ const InvitationBox = () => {
 
       if (response.data?.success) {
         dispatcher(setInvitations(response.data.data));
+        dispatcher(setHasMoreInvitations(false));
       }
     } catch (error) {
       console.log("Error getting invitations: ", error);
@@ -35,8 +42,9 @@ const InvitationBox = () => {
 
   useEffect(() => {
     if (!user.info) return;
+    if (!hasMoreInvitations) return;
     getAllInvitations();
-  }, [user.info, getAllInvitations]);
+  }, [user.info, getAllInvitations, hasMoreInvitations]);
 
   return (
     <div>
