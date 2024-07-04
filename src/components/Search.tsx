@@ -10,6 +10,7 @@ import { debounce } from "lodash";
 import axios from "axios";
 import { useAppSelector } from "@/lib/hooks";
 import { User } from "@/models/user.model";
+import SearchedUserSkeleton from "./SearchedUserSkeleton";
 
 const Search = () => {
   const [state, setState] = useState({
@@ -81,13 +82,15 @@ const Search = () => {
 
       <div className="pr-4">
         {state.searchLoading ? (
-          <div className="mt-6 flex justify-center">
-            <Loader />
+          <div className="mt-6 flex flex-col">
+            <SearchedUserSkeleton />
+            <SearchedUserSkeleton />
+            <SearchedUserSkeleton />
           </div>
         ) : state.searchResults.length === 0 ? (
           state.searchQuery.trim() !== "" &&
           !state.searchLoading && (
-            <p className="text-slate-500 text-center">
+            <p className="mt-6 text-slate-500 text-center">
               No users found for{" "}
               <span className="font-bold">{state.searchQuery}</span>
             </p>
