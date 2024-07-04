@@ -5,8 +5,12 @@ import ChatUser from "./ChatUser";
 import { useCallback, useEffect } from "react";
 import { User } from "@/models/user.model";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { setConversations } from "@/lib/features/conversations/conversationsSlice";
+import {
+  addConversation,
+  setConversations,
+} from "@/lib/features/conversations/conversationsSlice";
 import { setHasMoreConversations } from "@/lib/features/conversations/conversationsConfigSlice";
+import { pusherClient } from "@/lib/pusher";
 
 export interface Conversation {
   _id: string;
@@ -38,6 +42,22 @@ const Conversations = () => {
       console.log("Error fetching conversations: ", error);
     }
   }, [dispatcher]);
+
+  useEffect(() => {
+    if (!info) return;
+    pusherClient.subscribe(`conversations-${info.uid}`);
+
+    const handleNewConversation = async (newConversation: Conversation) => {
+      dispatcher(addConversation(newConversation));
+    };
+
+    pusherClient.bind("new-conversation", handleNewConversation);
+
+    return () => {
+      pusherClient.unsubscribe(`conversations-${info.uid}`);
+      pusherClient.unbind("new-conversation", handleNewConversation);
+    };
+  }, [info]);
 
   useEffect(() => {
     if (!info) return;

@@ -1,10 +1,12 @@
 import { connectDB } from "@/lib/db";
+import { pusherServer } from "@/lib/pusher";
 import { ConversationModel } from "@/models/conversation.model";
 import { InvitationModel } from "@/models/invitation.model";
 import { InvitationRequest } from "@/types/InvitationRequest";
 import { ApiError } from "@/utils/ApiError";
 import { ApiSuccess } from "@/utils/ApiSuccess";
 import { CustomRequest } from "@/utils/CustomRequest";
+import mongoose from "mongoose";
 
 export async function POST(req: CustomRequest) {
   await connectDB();
@@ -41,6 +43,31 @@ export async function POST(req: CustomRequest) {
         status: 500,
       });
     }
+
+    const conversationNotification = await ConversationModel.aggregate([
+      {
+        $match: { _id: new mongoose.Types.ObjectId(newConversation._id) },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "members",
+          foreignField: "_id",
+          as: "members",
+        },
+      },
+    ]);
+
+    pusherServer.trigger(
+      `conversations-${newConversation.members[0]}`,
+      "new-conversation",
+      conversationNotification[0]
+    );
+    pusherServer.trigger(
+      `conversations-${newConversation.members[1]}`,
+      "new-conversation",
+      conversationNotification[0]
+    );
 
     return Response.json(
       new ApiSuccess(200, "Conversation created", newConversation),
