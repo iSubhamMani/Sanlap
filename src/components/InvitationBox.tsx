@@ -6,9 +6,14 @@ import { Mail } from "lucide-react";
 import axios from "axios";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { useCallback, useEffect, useState } from "react";
-import { setInvitations } from "@/lib/features/invitation/invitationSlice";
+import {
+  addInvitation,
+  CustomInvitation,
+  setInvitations,
+} from "@/lib/features/invitation/invitationSlice";
 import Loader from "./Loader";
 import { setHasMoreInvitations } from "@/lib/features/invitation/invitationConfigSlice";
+import { pusherClient } from "@/lib/pusher";
 
 const InvitationBox = () => {
   const invitation = useAppSelector((state) => state.invitation);
@@ -39,6 +44,22 @@ const InvitationBox = () => {
       setLoading(false);
     }
   }, [dispatcher]);
+
+  useEffect(() => {
+    if (!user.info) return;
+    pusherClient.subscribe(`invitations-${user.info.uid}`);
+
+    const handleNewInvitations = async (newInvitation: CustomInvitation) => {
+      dispatcher(addInvitation(newInvitation));
+    };
+
+    pusherClient.bind("new-invitation", handleNewInvitations);
+
+    return () => {
+      pusherClient.unsubscribe("invitations");
+      pusherClient.unbind("new-invitation", handleNewInvitations);
+    };
+  }, [user.info]);
 
   useEffect(() => {
     if (!user.info) return;

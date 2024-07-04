@@ -1,9 +1,11 @@
 import { connectDB } from "@/lib/db";
+import { pusherServer } from "@/lib/pusher";
 import { InvitationModel } from "@/models/invitation.model";
 import { InvitationRequest } from "@/types/InvitationRequest";
 import { ApiError } from "@/utils/ApiError";
 import { ApiSuccess } from "@/utils/ApiSuccess";
 import { CustomRequest } from "@/utils/CustomRequest";
+import mongoose from "mongoose";
 
 // create a new invitation
 export async function POST(req: CustomRequest) {
@@ -32,6 +34,42 @@ export async function POST(req: CustomRequest) {
         status: 500,
       });
     }
+
+    const invitationNotification = await InvitationModel.aggregate([
+      {
+        $match: {
+          _id: new mongoose.Types.ObjectId(createdInvitation._id as string),
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "sender",
+          foreignField: "_id",
+          as: "sender",
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "recipient",
+          foreignField: "_id",
+          as: "recipient",
+        },
+      },
+      {
+        $unwind: "$recipient",
+      },
+      {
+        $unwind: "$sender",
+      },
+    ]);
+
+    pusherServer.trigger(
+      `invitations-${createdInvitation.recipient}`,
+      "new-invitation",
+      invitationNotification[0]
+    );
 
     return Response.json(
       new ApiSuccess(201, "Invitation Created", createdInvitation),
