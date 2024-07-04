@@ -1,8 +1,10 @@
-import { Message } from "@/models/message.model";
+"use client";
+
 import { User } from "@/models/user.model";
 import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 import ChatMessage from "./ChatMessage";
+import { pusherClient } from "@/lib/pusher";
 
 export interface CustomMessage {
   _id: string;
@@ -37,10 +39,25 @@ const MessagesContainer = ({ conversationId }: { conversationId: string }) => {
     getAllMessages();
   }, [getAllMessages]);
 
+  useEffect(() => {
+    pusherClient.subscribe(`messages-${conversationId}`);
+
+    const handleIncomingMessage = async (newMessage: CustomMessage) => {
+      setMessages((prevMessages) => [...prevMessages, newMessage]);
+    };
+
+    pusherClient.bind("new-message", handleIncomingMessage);
+
+    return () => {
+      pusherClient.unsubscribe(`messages-${conversationId}`);
+      pusherClient.unbind("new-message", handleIncomingMessage);
+    };
+  }, []);
+
   if (!conversationId) return null;
 
   return (
-    <div>
+    <div className="flex-1 overflow-auto">
       <div className="grid gap-6 px-6 py-8">
         {messages?.map((message) => (
           <ChatMessage key={message._id} message={message} />
