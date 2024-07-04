@@ -5,28 +5,32 @@ import InvitationCard from "@/components/InvitationCard";
 import { Mail } from "lucide-react";
 import axios from "axios";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 import {
   addInvitation,
   CustomInvitation,
   setInvitations,
 } from "@/lib/features/invitation/invitationSlice";
-import Loader from "./Loader";
-import { setHasMoreInvitations } from "@/lib/features/invitation/invitationConfigSlice";
+import {
+  setHasMoreInvitations,
+  setInvitationLoading,
+} from "@/lib/features/invitation/invitationConfigSlice";
 import { pusherClient } from "@/lib/pusher";
+import InvitationCardSkeleton from "./InvitationCardSkeleton";
+import toast from "react-hot-toast";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { UserRound } from "lucide-react";
+import { User } from "@/models/user.model";
 
 const InvitationBox = () => {
   const invitation = useAppSelector((state) => state.invitation);
-  const { hasMoreInvitations } = useAppSelector(
+  const { hasMoreInvitations, invitationLoading } = useAppSelector(
     (state) => state.invitationConfig
   );
   const user = useAppSelector((state) => state.user);
   const dispatcher = useAppDispatch();
 
-  const [loading, setLoading] = useState(false);
-
   const getAllInvitations = useCallback(async () => {
-    setLoading(true);
     try {
       const response = await axios.get(`/api/invitations`, {
         headers: {
@@ -41,7 +45,7 @@ const InvitationBox = () => {
     } catch (error) {
       console.log("Error getting invitations: ", error);
     } finally {
-      setLoading(false);
+      dispatcher(setInvitationLoading(false));
     }
   }, [dispatcher]);
 
@@ -51,6 +55,43 @@ const InvitationBox = () => {
 
     const handleNewInvitations = async (newInvitation: CustomInvitation) => {
       dispatcher(addInvitation(newInvitation));
+      const sender = newInvitation.sender;
+      toast.custom((t) => (
+        <div
+          className={`${
+            t.visible ? "animate-enter" : "animate-leave"
+          } max-w-md w-full bg-white shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5`}
+        >
+          <div className="flex-1 w-0 p-4">
+            <div className="flex items-start">
+              <div className="flex-shrink-0 pt-0.5">
+                <Avatar>
+                  <AvatarImage src={sender?.photoURL} />
+                  <AvatarFallback>
+                    <UserRound />
+                  </AvatarFallback>
+                </Avatar>
+              </div>
+              <div className="ml-3 flex-1">
+                <p className="text-sm font-medium text-gray-900">
+                  {sender?.displayName}
+                </p>
+                <p className="mt-1 text-sm text-gray-500">
+                  sent you an invitation
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="flex border-l border-gray-200">
+            <button
+              onClick={() => toast.dismiss(t.id)}
+              className="w-full border border-transparent rounded-none rounded-r-lg p-4 flex items-center justify-center text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      ));
     };
 
     pusherClient.bind("new-invitation", handleNewInvitations);
@@ -77,10 +118,12 @@ const InvitationBox = () => {
           </CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col gap-6">
-          {loading ? (
-            <div className="mt-4 flex justify-center">
-              <Loader />
-            </div>
+          {invitationLoading ? (
+            <>
+              <InvitationCardSkeleton />
+              <InvitationCardSkeleton />
+              <InvitationCardSkeleton />
+            </>
           ) : Object.entries(invitation.invitations).length > 0 ? (
             Object.entries(invitation.invitations).map(([, invitation]) => {
               return (
