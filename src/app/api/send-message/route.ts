@@ -1,9 +1,11 @@
 import { connectDB } from "@/lib/db";
+import { pusherServer } from "@/lib/pusher";
 import { MessageModel } from "@/models/message.model";
 import { MessageRequest } from "@/types/MessageRequest";
 import { ApiError } from "@/utils/ApiError";
 import { ApiSuccess } from "@/utils/ApiSuccess";
 import { CustomRequest } from "@/utils/CustomRequest";
+import mongoose from "mongoose";
 
 export async function POST(req: CustomRequest) {
   await connectDB();
@@ -25,14 +27,49 @@ export async function POST(req: CustomRequest) {
       conversationId,
     });
 
-    const newMessage = await message.save();
+    const createdMessage = await message.save();
 
-    if (!newMessage) {
+    if (!createdMessage) {
       return Response.json(new ApiError(500, "Failed to send message"));
     }
 
+    const newMessage = await MessageModel.aggregate([
+      {
+        $match: {
+          _id: new mongoose.Types.ObjectId(createdMessage._id),
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "sender",
+          foreignField: "_id",
+          as: "sender",
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "recipient",
+          foreignField: "_id",
+          as: "recipient",
+        },
+      },
+      {
+        $unwind: "$sender",
+      },
+      {
+        $unwind: "$recipient",
+      },
+    ]);
+    await pusherServer.trigger(
+      `messages-${conversationId}`,
+      "new-message",
+      newMessage[0]
+    );
+
     return Response.json(
-      new ApiSuccess(201, "Message sent successfully", newMessage),
+      new ApiSuccess(201, "Message sent successfully", createdMessage),
       { status: 201 }
     );
   } catch (error: any) {
