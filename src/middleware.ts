@@ -35,6 +35,7 @@ export const config = {
     "/api/check-invitation",
     "/api/accept-invitation",
     "/api/reject-invitation",
+    "/api/cancel-invitation",
     "/api/invitations",
     "/api/conversations",
     "/api/search",
