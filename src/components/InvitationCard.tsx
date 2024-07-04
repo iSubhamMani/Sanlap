@@ -34,7 +34,7 @@ const Invitation: React.FC<InvitationCardProps> = ({ invitation }) => {
         dispatcher(deleteInvitation(invitation._id));
       }
     } catch (error) {
-      console.log("Error rejecting invitation: ", error);
+      console.log("Error accepting invitation: ", error);
     }
   };
 
