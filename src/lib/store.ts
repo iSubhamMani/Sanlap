@@ -4,6 +4,7 @@ import invitationSlice from "./features/invitation/invitationSlice";
 import invitationConfigSlice from "./features/invitation/invitationConfigSlice";
 import conversationsSlice from "./features/conversations/conversationsSlice";
 import conversationsConfigSlice from "./features/conversations/conversationsConfigSlice";
+import userConfigSlice from "./features/user/userConfig";
 
 export const makeStore = () => {
   return configureStore({
@@ -13,6 +14,7 @@ export const makeStore = () => {
       invitationConfig: invitationConfigSlice,
       conversations: conversationsSlice,
       conversationsConfig: conversationsConfigSlice,
+      userConfig: userConfigSlice,
     },
   });
 };
