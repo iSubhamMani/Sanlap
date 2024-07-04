@@ -15,6 +15,12 @@ import {
 import axios from "axios";
 import { UserInfo } from "@/lib/features/user/userSlice";
 import { useEffect, useMemo, useState } from "react";
+import { pusherClient } from "@/lib/pusher";
+import {
+  CustomInvitation,
+  deleteInvitation,
+} from "@/lib/features/invitation/invitationSlice";
+import { useAppDispatch } from "@/lib/hooks";
 
 const SearchedUser = ({
   user,
@@ -24,6 +30,18 @@ const SearchedUser = ({
   currentUser: UserInfo | null;
 }) => {
   const [inviteStatus, setInviteStatus] = useState<string>("");
+  const dispatcher = useAppDispatch();
+
+  useEffect(() => {
+    if (!currentUser) return;
+    pusherClient.subscribe(`cancel-invitation-${currentUser.uid}`);
+
+    const handleInvitationCancel = (deletedInvitation: CustomInvitation) => {
+      dispatcher(deleteInvitation(deletedInvitation._id));
+    };
+
+    pusherClient.bind("cancel-invitation", handleInvitationCancel);
+  }, [currentUser]);
 
   useEffect(() => {
     if (!currentUser || !user) return;
@@ -76,7 +94,26 @@ const SearchedUser = ({
   };
 
   const cancelInvitation = async () => {
-    console.log("Cancel invitation");
+    try {
+      const response = await axios.post(
+        "/api/cancel-invitation",
+        {
+          sender: currentUser?.uid,
+          recipient: user._id,
+        },
+        {
+          headers: {
+            Authorization: `${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      if (response.data?.success) {
+        setInviteStatus("unsent");
+      }
+    } catch (error) {
+      console.log("Something went wrong: ", error);
+    }
   };
 
   const inviteActions = useMemo(() => {
