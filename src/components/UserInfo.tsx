@@ -2,11 +2,23 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { LogOut, UserRound } from "lucide-react";
-import { useAppSelector } from "@/lib/hooks";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks";
+import { useEffect } from "react";
+import { setUserInfoLoading } from "@/lib/features/user/userConfig";
+import UserInfoSkeleton from "./UserInfoSkeleton";
 
 const UserInfo = () => {
   const { info } = useAppSelector((state) => state.user);
-  return (
+  const { loading } = useAppSelector((state) => state.userConfig);
+  const dispatcher = useAppDispatch();
+
+  useEffect(() => {
+    if (info) dispatcher(setUserInfoLoading(false));
+  }, [info]);
+
+  return loading ? (
+    <UserInfoSkeleton />
+  ) : (
     <div className="flex justify-between items-center">
       <div className="flex items-center gap-3">
         <Avatar>
