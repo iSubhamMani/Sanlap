@@ -13,8 +13,12 @@ const conversationsSlice = createSlice({
         state.conversations[conversation._id] = conversation;
       });
     },
+    addConversation: (state, action) => {
+      const newConversation = action.payload;
+      state.conversations[newConversation._id] = newConversation;
+    },
   },
 });
 
-export const { setConversations } = conversationsSlice.actions;
+export const { setConversations, addConversation } = conversationsSlice.actions;
 export default conversationsSlice.reducer;
