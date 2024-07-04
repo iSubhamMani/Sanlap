@@ -2,15 +2,19 @@
 
 import axios from "axios";
 import ChatUser from "./ChatUser";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { User } from "@/models/user.model";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import {
   addConversation,
   setConversations,
 } from "@/lib/features/conversations/conversationsSlice";
-import { setHasMoreConversations } from "@/lib/features/conversations/conversationsConfigSlice";
+import {
+  setHasMoreConversations,
+  setLoading,
+} from "@/lib/features/conversations/conversationsConfigSlice";
 import { pusherClient } from "@/lib/pusher";
+import ChatUserSkeleton from "./ChatUserSkeleton";
 
 export interface Conversation {
   _id: string;
@@ -20,7 +24,7 @@ export interface Conversation {
 
 const Conversations = () => {
   const { conversations } = useAppSelector((state) => state.conversations);
-  const { hasMoreConversations } = useAppSelector(
+  const { hasMoreConversations, loading } = useAppSelector(
     (state) => state.conversationsConfig
   );
   const { info } = useAppSelector((state) => state.user);
@@ -40,6 +44,8 @@ const Conversations = () => {
       }
     } catch (error) {
       console.log("Error fetching conversations: ", error);
+    } finally {
+      dispatcher(setLoading(false));
     }
   }, [dispatcher]);
 
@@ -67,7 +73,13 @@ const Conversations = () => {
 
   return (
     <div className="flex-1 flex flex-col">
-      {Object.entries(conversations).length === 0 ? (
+      {loading ? (
+        <div>
+          <ChatUserSkeleton />
+          <ChatUserSkeleton />
+          <ChatUserSkeleton />
+        </div>
+      ) : Object.entries(conversations).length === 0 ? (
         <div>
           <p className="text-slate-500 text-xl text-center mt-16 text-balance">
             No conversations found. Start by searching for a user to chat with.
