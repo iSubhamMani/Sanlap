@@ -9,7 +9,7 @@ import { User } from "@/models/user.model";
 import axios from "axios";
 import { ArrowLeft, Send, Settings, UserRound } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Drawer,
   DrawerClose,
@@ -35,17 +35,19 @@ import MessagesContainer from "@/components/MessagesContainer";
 
 export default function ChatDetails() {
   const { chatId } = useParams();
+  const memoizedChatId = useMemo(() => chatId, [chatId]);
+
   const [chatDetails, setChatDetails] = useState<Conversation>();
   const [otherMember, setOtherMember] = useState<User>();
   const { info } = useAppSelector((state) => state.user);
   const navigate = useRouter();
 
   const getChatDetails = useCallback(async () => {
-    if (!chatId) return;
+    if (!memoizedChatId) return;
 
     try {
       const response = await axios.get(
-        `/api/chat-details/${chatId.toString()}`,
+        `/api/chat-details/${memoizedChatId.toString()}`,
         {
           headers: {
             Authorization: `${localStorage.getItem("token")}`,
@@ -58,7 +60,7 @@ export default function ChatDetails() {
     } catch (error) {
       console.error(error);
     }
-  }, [chatId]);
+  }, [memoizedChatId]);
 
   useEffect(() => {
     getChatDetails();
@@ -71,8 +73,6 @@ export default function ChatDetails() {
     );
   }, [chatDetails, info]);
 
-  if (!chatDetails || !otherMember) return null;
-
   return (
     <div className="w-full rounded-lg bg-background ">
       <div className="mx-auto w-full max-w-3xl min-h-[100dvh] flex flex-col shadow-lg">
@@ -83,12 +83,14 @@ export default function ChatDetails() {
               onClick={() => navigate.back()}
             />
             <Avatar>
-              <AvatarImage src={otherMember.photoURL} />
+              <AvatarImage src={otherMember?.photoURL} />
               <AvatarFallback>
                 <UserRound />
               </AvatarFallback>
             </Avatar>
-            <div className="text-sm font-medium">{otherMember.displayName}</div>
+            <div className="text-sm font-medium">
+              {otherMember?.displayName}
+            </div>
           </div>
           <div>
             <Drawer>
@@ -157,12 +159,14 @@ export default function ChatDetails() {
             </Drawer>
           </div>
         </div>
-        <MessagesContainer conversationId={chatId.toString()} />
-        <ChatInput
-          sender={info}
-          recipient={otherMember}
-          conversationId={chatId.toString()}
-        />
+        <MessagesContainer conversationId={memoizedChatId.toString()} />
+        {otherMember && (
+          <ChatInput
+            sender={info}
+            recipient={otherMember}
+            conversationId={memoizedChatId.toString()}
+          />
+        )}
       </div>
     </div>
   );
