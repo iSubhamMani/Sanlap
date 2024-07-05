@@ -1,5 +1,4 @@
 import mongoose, { Model, Schema } from "mongoose";
-import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
 
 export interface Message {
   conversationId: Schema.Types.ObjectId;
@@ -34,8 +33,6 @@ const messageSchema: Schema<Message> = new Schema<Message>(
   },
   { timestamps: true }
 );
-
-messageSchema.plugin(mongooseAggregatePaginate);
 
 export const MessageModel =
   (mongoose.models.Message as Model<Message>) ||
