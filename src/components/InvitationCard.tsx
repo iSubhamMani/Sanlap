@@ -2,7 +2,7 @@ import { UserRound } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
 import axios from "axios";
-import { useAppDispatch, useAppSelector } from "@/lib/hooks";
+import { useAppDispatch } from "@/lib/hooks";
 import {
   CustomInvitation,
   deleteInvitation,
@@ -62,7 +62,7 @@ const Invitation: React.FC<InvitationCardProps> = ({ invitation }) => {
   };
 
   return (
-    <div className="flex items-center justify-between gap-4">
+    <div className="animate-bounceIn flex items-center justify-between gap-4">
       <div className="flex items-center gap-3">
         <Avatar>
           <AvatarImage src={invitation.sender?.photoURL} />
