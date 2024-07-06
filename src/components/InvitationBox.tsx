@@ -9,6 +9,7 @@ import { useCallback, useEffect } from "react";
 import {
   addInvitation,
   CustomInvitation,
+  deleteInvitation,
   setInvitations,
 } from "@/lib/features/invitation/invitationSlice";
 import {
@@ -20,14 +21,13 @@ import InvitationCardSkeleton from "./InvitationCardSkeleton";
 import toast from "react-hot-toast";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { UserRound } from "lucide-react";
-import { User } from "@/models/user.model";
 
 const InvitationBox = () => {
   const invitation = useAppSelector((state) => state.invitation);
   const { hasMoreInvitations, invitationLoading } = useAppSelector(
     (state) => state.invitationConfig
   );
-  const user = useAppSelector((state) => state.user);
+  const { info } = useAppSelector((state) => state.user);
   const dispatcher = useAppDispatch();
 
   const getAllInvitations = useCallback(async () => {
@@ -50,8 +50,9 @@ const InvitationBox = () => {
   }, [dispatcher]);
 
   useEffect(() => {
-    if (!user.info) return;
-    pusherClient.subscribe(`invitations-${user.info.uid}`);
+    if (!info) return;
+    pusherClient.subscribe(`invitations-${info.uid}`);
+    pusherClient.subscribe(`cancel-invitation-${info.uid}`);
 
     const handleNewInvitations = async (newInvitation: CustomInvitation) => {
       dispatcher(addInvitation(newInvitation));
@@ -94,19 +95,28 @@ const InvitationBox = () => {
       ));
     };
 
+    const handleInvitationCancel = async (
+      deletedInvitation: CustomInvitation
+    ) => {
+      dispatcher(deleteInvitation(deletedInvitation._id));
+    };
+
+    pusherClient.bind("cancel-invitation", handleInvitationCancel);
     pusherClient.bind("new-invitation", handleNewInvitations);
 
     return () => {
-      pusherClient.unsubscribe("invitations");
+      pusherClient.unsubscribe(`invitations-${info?.uid}`);
       pusherClient.unbind("new-invitation", handleNewInvitations);
+      pusherClient.unsubscribe(`cancel-invitation-${info?.uid}`);
+      pusherClient.unbind("cancel-invitation", handleInvitationCancel);
     };
-  }, [user.info]);
+  }, [info]);
 
   useEffect(() => {
-    if (!user.info) return;
+    if (!info) return;
     if (!hasMoreInvitations) return;
     getAllInvitations();
-  }, [user.info, getAllInvitations, hasMoreInvitations]);
+  }, [info, getAllInvitations, hasMoreInvitations]);
 
   return (
     <div>
