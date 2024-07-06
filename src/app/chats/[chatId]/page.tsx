@@ -160,6 +160,10 @@ export default function ChatDetails() {
           </div>
         </div>
         <MessagesContainer conversationId={memoizedChatId.toString()} />
+        <p className="mb-4 text-center text-sm text-slate-500">
+          This is the start of your epic conversation with{" "}
+          {otherMember?.displayName}
+        </p>
         {otherMember && (
           <ChatInput
             sender={info}
