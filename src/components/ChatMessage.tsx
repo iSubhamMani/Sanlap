@@ -9,7 +9,7 @@ const ChatMessage = ({ message }: { message: CustomMessage }) => {
 
   return (
     <div
-      className={`flex items-start gap-3 ${
+      className={`animate-bounceIn flex items-start gap-3 ${
         message.sender._id === info?.uid && "justify-end" && "flex-row-reverse"
       }`}
     >
@@ -19,9 +19,27 @@ const ChatMessage = ({ message }: { message: CustomMessage }) => {
           <UserRound />
         </AvatarFallback>
       </Avatar>
-      <div className="bg-muted rounded-lg p-3 max-w-[70%]">
-        <div>{message?.content}</div>
-        <div className="text-xs text-muted-foreground mt-1">
+      <div
+        className={`${
+          message.sender._id === info?.uid ? "bg-primary" : "bg-muted"
+        } rounded-lg p-3 max-w-[70%]`}
+      >
+        <div
+          className={`${
+            message.sender._id === info?.uid
+              ? "text-primary-foreground"
+              : "text-black"
+          }`}
+        >
+          {message?.content}
+        </div>
+        <div
+          className={`${
+            message.sender._id === info?.uid
+              ? "text-gray-200"
+              : "text-muted-foreground"
+          } text-xs mt-1`}
+        >
           {formatMongoDate(message?.createdAt.toString())}
         </div>
       </div>
