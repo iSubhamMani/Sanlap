@@ -36,7 +36,7 @@ export async function GET(req: CustomRequest) {
           data: [
             { $skip: (page - 1) * pageSize },
             { $limit: pageSize },
-            { $sort: { createdAt: 1 } },
+            { $sort: { createdAt: -1 } },
             {
               $lookup: {
                 from: "users",
