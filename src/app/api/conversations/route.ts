@@ -18,14 +18,44 @@ export async function GET(req: CustomRequest) {
 
     const allConversations = await ConversationModel.aggregate([
       {
-        $match: { members: { $in: [userId] } },
+        $match: { "members._id": userId },
       },
       {
         $lookup: {
           from: "users",
-          localField: "members",
+          localField: "members._id",
           foreignField: "_id",
-          as: "members",
+          as: "memberDetails",
+        },
+      },
+      {
+        $unwind: "$memberDetails",
+      },
+      {
+        $group: {
+          _id: "$_id",
+          members: {
+            $push: {
+              _id: "$memberDetails._id",
+              email: "$memberDetails.email",
+              displayName: "$memberDetails.displayName",
+              photoURL: "$memberDetails.photoURL",
+              createdAt: "$memberDetails.createdAt",
+              updatedAt: "$memberDetails.updatedAt",
+            },
+          },
+          lastMessageAt: { $first: "$lastMessageAt" },
+          createdAt: { $first: "$createdAt" },
+          updatedAt: { $first: "$updatedAt" },
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          members: 1,
+          lastMessageAt: 1,
+          createdAt: 1,
+          updatedAt: 1,
         },
       },
     ]);
