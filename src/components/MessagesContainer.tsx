@@ -103,7 +103,7 @@ const MessagesContainer = ({ conversationId }: { conversationId: string }) => {
         loader={
           loading && (
             <div className="flex justify-center">
-              <Loader />
+              <Loader dimensions="w-8 h-8" />
             </div>
           )
         }
