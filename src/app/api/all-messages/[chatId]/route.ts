@@ -62,16 +62,26 @@ export async function GET(req: CustomRequest) {
           ],
         },
       },
+      {
+        $project: {
+          data: 1,
+          totalCount: {
+            $ifNull: [{ $arrayElemAt: ["$metadata.totalCount", 0] }, 0],
+          },
+        },
+      },
     ]);
+
+    console.log(messages[0]);
 
     return Response.json(
       new ApiSuccess(200, "Messages retrieved", {
         messages: messages[0].data,
         metadata: {
-          totalCount: messages[0].metadata[0].totalCount,
+          totalCount: messages[0].totalCount,
           page,
           pageSize,
-          hasNextPage: messages[0].metadata[0].totalCount - page * pageSize > 0,
+          hasNextPage: messages[0].totalCount - page * pageSize > 0,
         },
       }),
       {
