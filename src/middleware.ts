@@ -42,5 +42,6 @@ export const config = {
     "/api/chat-details/:path*",
     "/api/send-message",
     "/api/all-messages/:path*",
+    "/api/update-lang-prefs",
   ],
 };
