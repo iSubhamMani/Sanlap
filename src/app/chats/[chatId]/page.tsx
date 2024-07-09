@@ -1,46 +1,28 @@
 "use client";
 
-import { Conversation } from "@/components/Conversations";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-
-import { useAppSelector } from "@/lib/hooks";
-import { User } from "@/models/user.model";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import axios from "axios";
-import { ArrowLeft, Send, Settings, UserRound } from "lucide-react";
+import { ArrowLeft, UserRound } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/ui/drawer";
-import languages from "@/utils/languages";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
 import ChatInput from "@/components/ChatInput";
 import MessagesContainer from "@/components/MessagesContainer";
+import { addConversationDetails } from "@/lib/features/conversationDetails/conversationDetailsSlice";
+import ChatLangPrefs from "@/components/ChatLangPrefs";
 
 export default function ChatDetails() {
   const { chatId } = useParams();
   const memoizedChatId = useMemo(() => chatId, [chatId]);
 
-  const [chatDetails, setChatDetails] = useState<Conversation>();
-  const [otherMember, setOtherMember] = useState<User>();
+  const [otherMember, setOtherMember] = useState<any>();
   const { info } = useAppSelector((state) => state.user);
+  const { conversationDetails } = useAppSelector(
+    (store) => store.conversationDetails
+  );
   const navigate = useRouter();
+  const dispatcher = useAppDispatch();
 
   const getChatDetails = useCallback(async () => {
     if (!memoizedChatId) return;
@@ -55,7 +37,7 @@ export default function ChatDetails() {
         }
       );
       if (response.data?.success) {
-        setChatDetails(response.data.data);
+        dispatcher(addConversationDetails(response.data.data));
       }
     } catch (error) {
       console.error(error);
@@ -63,15 +45,18 @@ export default function ChatDetails() {
   }, [memoizedChatId]);
 
   useEffect(() => {
+    if (conversationDetails[memoizedChatId.toString()]) return;
     getChatDetails();
   }, [getChatDetails]);
 
   useEffect(() => {
-    if (!chatDetails || !info) return;
+    if (!conversationDetails[memoizedChatId.toString()] || !info) return;
     setOtherMember(
-      chatDetails.members.find((member) => member._id !== info?.uid)
+      conversationDetails[memoizedChatId.toString()].members.find(
+        (member) => member._id !== info.uid
+      )
     );
-  }, [chatDetails, info]);
+  }, [conversationDetails, info]);
 
   return (
     <div className="w-full rounded-lg bg-background ">
@@ -92,72 +77,10 @@ export default function ChatDetails() {
               {otherMember?.displayName}
             </div>
           </div>
-          <div>
-            <Drawer>
-              <DrawerTrigger asChild>
-                <Settings className="w-6 h-6 cursor-pointer" />
-              </DrawerTrigger>
-              <DrawerContent>
-                <div className="mx-auto w-full max-w-lg">
-                  <DrawerHeader>
-                    <DrawerTitle>Language preference</DrawerTitle>
-                    <DrawerDescription>
-                      Set your preferred language for this conversation
-                    </DrawerDescription>
-                  </DrawerHeader>
-                  <div className="p-4 pb-0 flex flex-col gap-6">
-                    <Select defaultValue="english">
-                      <div>
-                        <label className="font-bold text-sm" htmlFor="type-in">
-                          Type in
-                        </label>
-                        <SelectTrigger id="type-in" className="w-full mt-2">
-                          <SelectValue placeholder="Type in" />
-                        </SelectTrigger>
-                      </div>
-                      <SelectContent>
-                        <SelectGroup>
-                          {languages.map((lang) => (
-                            <SelectItem key={lang} value={lang}>
-                              <SelectLabel>{lang}</SelectLabel>
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                    <Select defaultValue="english">
-                      <div>
-                        <label
-                          className="font-bold text-sm"
-                          htmlFor="receive-in"
-                        >
-                          Receive in
-                        </label>
-                        <SelectTrigger id="receive-in" className="w-full mt-2">
-                          <SelectValue placeholder="Receive in" />
-                        </SelectTrigger>
-                      </div>
-                      <SelectContent>
-                        <SelectGroup>
-                          {languages.map((lang) => (
-                            <SelectItem key={lang} value={lang}>
-                              <SelectLabel>{lang}</SelectLabel>
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <DrawerFooter>
-                    <Button>Submit</Button>
-                    <DrawerClose asChild>
-                      <Button variant="outline">Cancel</Button>
-                    </DrawerClose>
-                  </DrawerFooter>
-                </div>
-              </DrawerContent>
-            </Drawer>
-          </div>
+          <ChatLangPrefs
+            conversationId={memoizedChatId.toString()}
+            currentUser={info}
+          />
         </div>
         <MessagesContainer conversationId={memoizedChatId.toString()} />
         <p className="mb-4 text-center text-sm text-slate-500">
