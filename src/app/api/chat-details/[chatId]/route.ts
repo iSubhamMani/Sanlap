@@ -30,11 +30,37 @@ export async function GET(req: CustomRequest) {
         $match: { _id: new mongoose.Types.ObjectId(chatId) },
       },
       {
+        $unwind: "$members",
+      },
+      {
         $lookup: {
           from: "users",
-          localField: "members",
+          localField: "members._id",
           foreignField: "_id",
-          as: "members",
+          as: "memberDetails",
+        },
+      },
+      {
+        $unwind: "$memberDetails",
+      },
+      {
+        $group: {
+          _id: "$_id",
+          members: {
+            $push: {
+              _id: "$members._id",
+              type_in_lang: "$members.type_in_lang",
+              receive_in_lang: "$members.receive_in_lang",
+              email: "$memberDetails.email",
+              displayName: "$memberDetails.displayName",
+              photoURL: "$memberDetails.photoURL",
+              createdAt: "$memberDetails.createdAt",
+              updatedAt: "$memberDetails.updatedAt",
+            },
+          },
+          lastMessageAt: { $first: "$lastMessageAt" },
+          createdAt: { $first: "$createdAt" },
+          updatedAt: { $first: "$updatedAt" },
         },
       },
     ]);
