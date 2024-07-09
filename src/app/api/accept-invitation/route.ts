@@ -21,6 +21,9 @@ export async function POST(req: CustomRequest) {
       );
     }
 
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
     const updatedInvitation = await InvitationModel.findOneAndUpdate(
       { sender, recipient },
       { status: "accepted" }
@@ -33,7 +36,7 @@ export async function POST(req: CustomRequest) {
     }
 
     const newConversation = new ConversationModel({
-      members: [sender, recipient],
+      members: [{ _id: sender }, { _id: recipient }],
     });
 
     await newConversation.save();
@@ -49,25 +52,60 @@ export async function POST(req: CustomRequest) {
         $match: { _id: new mongoose.Types.ObjectId(newConversation._id) },
       },
       {
+        $unwind: "$members",
+      },
+      {
         $lookup: {
           from: "users",
-          localField: "members",
+          localField: "members._id",
           foreignField: "_id",
-          as: "members",
+          as: "memberDetails",
+        },
+      },
+      {
+        $unwind: "$memberDetails",
+      },
+      {
+        $group: {
+          _id: "$_id",
+          members: {
+            $push: {
+              _id: "$memberDetails._id",
+              email: "$memberDetails.email",
+              displayName: "$memberDetails.displayName",
+              photoURL: "$memberDetails.photoURL",
+              createdAt: "$memberDetails.createdAt",
+              updatedAt: "$memberDetails.updatedAt",
+            },
+          },
+          lastMessageAt: { $first: "$lastMessageAt" },
+          createdAt: { $first: "$createdAt" },
+          updatedAt: { $first: "$updatedAt" },
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          members: 1,
+          lastMessageAt: 1,
+          createdAt: 1,
+          updatedAt: 1,
         },
       },
     ]);
 
     pusherServer.trigger(
-      `conversations-${newConversation.members[0]}`,
+      `conversations-${newConversation.members[0]._id}`,
       "new-conversation",
       conversationNotification[0]
     );
     pusherServer.trigger(
-      `conversations-${newConversation.members[1]}`,
+      `conversations-${newConversation.members[1]._id}`,
       "new-conversation",
       conversationNotification[0]
     );
+
+    await session.commitTransaction();
 
     return Response.json(
       new ApiSuccess(200, "Conversation created", newConversation),
