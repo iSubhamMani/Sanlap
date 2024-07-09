@@ -72,8 +72,6 @@ export async function GET(req: CustomRequest) {
       },
     ]);
 
-    console.log(messages[0]);
-
     return Response.json(
       new ApiSuccess(200, "Messages retrieved", {
         messages: messages[0].data,
