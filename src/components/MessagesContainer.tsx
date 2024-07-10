@@ -17,6 +17,7 @@ export interface CustomMessage {
   updatedAt: Date;
   conversationId: string;
   content: string;
+  translated_content: string;
 }
 
 const MessagesContainer = ({ conversationId }: { conversationId: string }) => {
