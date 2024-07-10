@@ -1,12 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Textarea } from "./ui/textarea";
 import { Button } from "./ui/button";
 import { Send } from "lucide-react";
 import axios from "axios";
 import { UserInfo } from "@/lib/features/user/userSlice";
 import { User } from "@/models/user.model";
+import { useAppSelector } from "@/lib/hooks";
+import { UserDetailsAndPrefs } from "@/types/UserDetailsAndPrefs";
 
 const ChatInput = ({
   sender,
@@ -18,6 +20,26 @@ const ChatInput = ({
   conversationId: string;
 }) => {
   const [message, setMessage] = useState("");
+  const { conversationDetails } = useAppSelector(
+    (state) => state.conversationDetails
+  );
+
+  const { source_lang, target_lang } = useMemo(() => {
+    if (!conversationDetails[conversationId])
+      return { source_lang: "", target_lang: "" };
+
+    const { type_in_lang } = conversationDetails[conversationId].members.find(
+      (member) => member._id === sender?.uid
+    ) as UserDetailsAndPrefs;
+
+    const { receive_in_lang } = conversationDetails[
+      conversationId
+    ].members.find(
+      (member) => member._id === recipient._id
+    ) as UserDetailsAndPrefs;
+
+    return { source_lang: type_in_lang, target_lang: receive_in_lang };
+  }, [conversationDetails]);
 
   const sendMessage = async () => {
     if (!message) return;
@@ -32,6 +54,8 @@ const ChatInput = ({
           recipient: recipient._id,
           content: message,
           conversationId: conversationId,
+          source_lang,
+          target_lang,
         },
         {
           headers: {
