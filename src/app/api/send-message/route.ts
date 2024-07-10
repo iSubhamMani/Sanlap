@@ -6,18 +6,52 @@ import { ApiError } from "@/utils/ApiError";
 import { ApiSuccess } from "@/utils/ApiSuccess";
 import { CustomRequest } from "@/utils/CustomRequest";
 import mongoose from "mongoose";
+import axios from "axios";
 
 export async function POST(req: CustomRequest) {
   await connectDB();
 
   try {
-    const { sender, recipient, content, conversationId } =
-      (await req.json()) as MessageRequest;
+    const {
+      sender,
+      recipient,
+      content,
+      conversationId,
+      source_lang,
+      target_lang,
+    } = (await req.json()) as MessageRequest;
 
-    if (!sender || !recipient || !content || !conversationId) {
+    if (
+      !sender ||
+      !recipient ||
+      !content ||
+      !conversationId ||
+      !source_lang ||
+      !target_lang
+    ) {
       return Response.json(new ApiError(400, "Invalid request body"), {
         status: 400,
       });
+    }
+
+    let translated_content = content;
+
+    if (source_lang !== target_lang) {
+      const response = await axios.post(
+        `http://localhost:3000/api/translate-content`,
+        {
+          source_lang,
+          target_lang,
+          text: content,
+        }
+      );
+
+      if (response.status !== 200) {
+        return Response.json(new ApiError(500, response.data?.message), {
+          status: 500,
+        });
+      }
+      translated_content = response.data.data;
     }
 
     const message = new MessageModel({
@@ -25,6 +59,7 @@ export async function POST(req: CustomRequest) {
       recipient,
       content,
       conversationId,
+      translated_content,
     });
 
     const createdMessage = await message.save();
@@ -62,6 +97,7 @@ export async function POST(req: CustomRequest) {
         $unwind: "$recipient",
       },
     ]);
+
     await pusherServer.trigger(
       `messages-${conversationId}`,
       "new-message",
