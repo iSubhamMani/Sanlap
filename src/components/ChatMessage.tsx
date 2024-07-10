@@ -31,7 +31,9 @@ const ChatMessage = ({ message }: { message: CustomMessage }) => {
               : "text-black"
           }`}
         >
-          {message?.content}
+          {message.sender._id === info?.uid
+            ? message?.content
+            : message?.translated_content}
         </div>
         <div
           className={`${
