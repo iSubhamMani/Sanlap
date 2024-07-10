@@ -3,6 +3,7 @@ import mongoose, { Model, Schema } from "mongoose";
 export interface Message {
   conversationId: Schema.Types.ObjectId;
   content: string;
+  translated_content: string;
   sender: string;
   recipient: string;
   createdAt: Date;
@@ -19,6 +20,10 @@ const messageSchema: Schema<Message> = new Schema<Message>(
     content: {
       type: String,
       required: true,
+    },
+    translated_content: {
+      type: String,
+      default: "",
     },
     sender: {
       type: String,
