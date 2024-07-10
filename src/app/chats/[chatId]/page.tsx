@@ -77,15 +77,17 @@ export default function ChatDetails() {
               {otherMember?.displayName}
             </div>
           </div>
-          <ChatLangPrefs
-            conversationId={memoizedChatId.toString()}
-            currentUser={info}
-          />
+          {conversationDetails[memoizedChatId.toString()] && (
+            <ChatLangPrefs
+              conversationId={memoizedChatId.toString()}
+              currentUser={info}
+            />
+          )}
         </div>
         <MessagesContainer conversationId={memoizedChatId.toString()} />
         <p className="mb-4 text-center text-sm text-slate-500">
           This is the start of your epic conversation with{" "}
-          {otherMember?.displayName}
+          <span className="font-bold">{otherMember?.displayName}</span>
         </p>
         {otherMember && (
           <ChatInput
