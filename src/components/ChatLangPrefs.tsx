@@ -36,7 +36,6 @@ const ChatLangPrefs = ({
   conversationId: string;
   currentUser: UserInfo | null;
 }) => {
-  console.log("Render ChatLangPrefs");
   const { conversationDetails } = useAppSelector(
     (state) => state.conversationDetails
   );
