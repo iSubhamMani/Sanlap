@@ -20,7 +20,7 @@ const ChatUser = ({
 
   return (
     <Link href={`/chats/${conversation._id}`}>
-      <div className="py-4 my-2 px-4 flex justify-between items-center gap-3 cursor-pointer rounded-sm hover:bg-muted transition ease-in-out duration-200">
+      <div className="py-4 my-2 lg:px-4 flex justify-between items-center gap-3 cursor-pointer rounded-sm hover:bg-muted transition ease-in-out duration-200">
         <div className="flex items-center gap-3">
           <Avatar>
             <AvatarImage src={otherMember.photoURL} />

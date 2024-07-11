@@ -19,7 +19,7 @@ const UserInfo = () => {
   return loading ? (
     <UserInfoSkeleton />
   ) : (
-    <div className="flex justify-between items-center">
+    <div className="flex flex-col gap-4 justify-end lg:flex-row lg:gap-0 lg:justify-between lg:items-center lg:w-full">
       <div className="flex items-center gap-3">
         <Avatar>
           <AvatarImage src={info?.photoURL} />
@@ -27,12 +27,15 @@ const UserInfo = () => {
             <UserRound />
           </AvatarFallback>
         </Avatar>
-        <div>
+        <div className="">
           <p className="text-xs font-light">Currently logged in as</p>
           <p className="text-base font-medium">{info?.displayName}</p>
         </div>
       </div>
-      <div>
+      <div className="flex gap-4">
+        <div className="lg:hidden">
+          <p className="text-lg font-medium">Logout</p>
+        </div>
         <LogOut />
       </div>
     </div>

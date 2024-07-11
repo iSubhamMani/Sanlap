@@ -66,7 +66,7 @@ const Search = () => {
   }, [state.searchQuery, debouncedSearch]);
 
   return (
-    <div className="relative max-w-[95%] flex-1">
+    <div className="relative w-full lg:max-w-[90%] flex-1">
       <SearchIcon className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
       <Input
         type="search"
@@ -80,9 +80,9 @@ const Search = () => {
         }
       />
 
-      <div className="pr-4">
+      <div className="lg:pr-4">
         {state.searchLoading ? (
-          <div className="mt-6 flex flex-col">
+          <div className="mt-4 lg:mt-6 flex flex-col">
             <SearchedUserSkeleton />
             <SearchedUserSkeleton />
             <SearchedUserSkeleton />
@@ -90,13 +90,13 @@ const Search = () => {
         ) : state.searchResults.length === 0 ? (
           state.searchQuery.trim() !== "" &&
           !state.searchLoading && (
-            <p className="mt-6 text-slate-500 text-center">
+            <p className="mt-4 lg:mt-6 text-slate-500 text-center">
               No users found for{" "}
               <span className="font-bold">{state.searchQuery}</span>
             </p>
           )
         ) : (
-          <ScrollArea className="mt-6 mb-8 h-[600px] w-full">
+          <ScrollArea className=" mt-2 lg:mt-6 lg:mb-8 h-[200px] lg:h-[600px] w-full">
             {state.searchResults.map((user: User) => (
               <SearchedUser key={user._id} user={user} currentUser={info} />
             ))}

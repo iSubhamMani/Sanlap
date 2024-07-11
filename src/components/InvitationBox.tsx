@@ -122,7 +122,7 @@ const InvitationBox = () => {
     <div>
       <Card className="sticky top-6">
         <CardHeader>
-          <CardTitle className="text-xl flex gap-3 items-center">
+          <CardTitle className="text-xl flex gap-3 items-center justify-center">
             <span>Your Invitations</span>
             <Mail className="w-6 h-6" />
           </CardTitle>

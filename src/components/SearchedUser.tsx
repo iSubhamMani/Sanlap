@@ -112,7 +112,7 @@ const SearchedUser = ({
   if (!inviteStatus || !currentUser || !user) return null;
 
   return (
-    <div className="my-8">
+    <div className="my-2 md:my-4 lg:my-8">
       <AlertDialog>
         <AlertDialogTrigger className="w-full">
           <div className="animate-bounceIn py-2 flex justify-between items-center gap-3 cursor-pointer rounded-sm">

@@ -74,14 +74,14 @@ const Conversations = () => {
   return (
     <div className="flex-1 flex flex-col">
       {loading ? (
-        <div>
+        <div className="max-w-[400px]">
           <ChatUserSkeleton />
           <ChatUserSkeleton />
           <ChatUserSkeleton />
         </div>
       ) : Object.entries(conversations).length === 0 ? (
         <div>
-          <p className="text-slate-500 text-xl text-center mt-16 text-balance">
+          <p className="text-slate-500 text-base md:text-lg lg:text-xl text-center mt-16 text-balance">
             No conversations found. Start by searching for a user to chat with.
           </p>
         </div>
