@@ -98,6 +98,7 @@ const InvitationBox = () => {
     const handleInvitationCancel = async (
       deletedInvitation: CustomInvitation
     ) => {
+      console.log("Cancelling invite");
       dispatcher(deleteInvitation(deletedInvitation._id));
     };
 
@@ -110,7 +111,7 @@ const InvitationBox = () => {
       pusherClient.unsubscribe(`cancel-invitation-${info?.uid}`);
       pusherClient.unbind("cancel-invitation", handleInvitationCancel);
     };
-  }, [info]);
+  }, [info, dispatcher]);
 
   useEffect(() => {
     if (!info) return;
