@@ -85,7 +85,7 @@ export default function ChatDetails() {
           )}
         </div>
         <MessagesContainer conversationId={memoizedChatId.toString()} />
-        <p className="mb-4 text-center text-sm text-slate-500">
+        <p className="mb-4 text-center text-balance text-sm text-slate-500">
           This is the start of your epic conversation with{" "}
           <span className="font-bold">{otherMember?.displayName}</span>
         </p>

@@ -62,7 +62,7 @@ const Invitation: React.FC<InvitationCardProps> = ({ invitation }) => {
   };
 
   return (
-    <div className="animate-bounceIn flex items-center justify-between gap-4">
+    <div className="animate-bounceIn flex flex-col lg:flex-row lg:items-center justify-between gap-4">
       <div className="flex items-center gap-3">
         <Avatar>
           <AvatarImage src={invitation.sender?.photoURL} />

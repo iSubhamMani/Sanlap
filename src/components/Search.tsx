@@ -66,7 +66,7 @@ const Search = () => {
   }, [state.searchQuery, debouncedSearch]);
 
   return (
-    <div className="relative w-full lg:max-w-[90%] flex-1">
+    <div className="relative w-full sm:max-w-[55%] xl:max-w-[90%] flex-1">
       <SearchIcon className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
       <Input
         type="search"
@@ -96,7 +96,7 @@ const Search = () => {
             </p>
           )
         ) : (
-          <ScrollArea className=" mt-2 lg:mt-6 lg:mb-8 h-[200px] lg:h-[600px] w-full">
+          <ScrollArea className=" mt-2 lg:mt-6 lg:mb-8 h-[200px] md:h-[250px] xl:h-[600px] w-full">
             {state.searchResults.map((user: User) => (
               <SearchedUser key={user._id} user={user} currentUser={info} />
             ))}
