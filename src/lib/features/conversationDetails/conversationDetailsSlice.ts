@@ -21,9 +21,15 @@ const conversationDetailsSlice = createSlice({
       member!.type_in_lang = langPrefs.type_in_lang;
       member!.receive_in_lang = langPrefs.receive_in_lang;
     },
+    removeConversationDetails: (state) => {
+      state.conversationDetails = {};
+    },
   },
 });
 
-export const { addConversationDetails, updateConversationLangPrefs } =
-  conversationDetailsSlice.actions;
+export const {
+  addConversationDetails,
+  updateConversationLangPrefs,
+  removeConversationDetails,
+} = conversationDetailsSlice.actions;
 export default conversationDetailsSlice.reducer;

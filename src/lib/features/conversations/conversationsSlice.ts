@@ -17,8 +17,12 @@ const conversationsSlice = createSlice({
       const newConversation = action.payload;
       state.conversations[newConversation._id] = newConversation;
     },
+    removeConversations: (state) => {
+      state.conversations = {};
+    },
   },
 });
 
-export const { setConversations, addConversation } = conversationsSlice.actions;
+export const { setConversations, addConversation, removeConversations } =
+  conversationsSlice.actions;
 export default conversationsSlice.reducer;

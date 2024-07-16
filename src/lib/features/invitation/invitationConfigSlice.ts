@@ -13,9 +13,16 @@ const invitationConfigSlice = createSlice({
     setInvitationLoading: (state, action) => {
       state.invitationLoading = action.payload;
     },
+    resetInvitationConfig: (state) => {
+      state.hasMoreInvitations = true;
+      state.invitationLoading = true;
+    },
   },
 });
 
-export const { setHasMoreInvitations, setInvitationLoading } =
-  invitationConfigSlice.actions;
+export const {
+  setHasMoreInvitations,
+  setInvitationLoading,
+  resetInvitationConfig,
+} = invitationConfigSlice.actions;
 export default invitationConfigSlice.reducer;

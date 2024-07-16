@@ -1,5 +1,11 @@
 "use client";
 
+import { removeConversationDetails } from "@/lib/features/conversationDetails/conversationDetailsSlice";
+import { resetConversationConfig } from "@/lib/features/conversations/conversationsConfigSlice";
+import { removeConversations } from "@/lib/features/conversations/conversationsSlice";
+import { resetInvitationConfig } from "@/lib/features/invitation/invitationConfigSlice";
+import { removeInvitations } from "@/lib/features/invitation/invitationSlice";
+import { resetUserConfig } from "@/lib/features/user/userConfig";
 import { removeUser, setUser } from "@/lib/features/user/userSlice";
 import { useAppDispatch } from "@/lib/hooks";
 import { auth } from "@/services/firebase/config";
@@ -15,6 +21,16 @@ export default function AuthProvider({
   const router = useRouter();
   const dispatcher = useAppDispatch();
 
+  function resetState() {
+    dispatcher(removeUser());
+    dispatcher(resetUserConfig());
+    dispatcher(removeConversationDetails());
+    dispatcher(removeConversations());
+    dispatcher(resetConversationConfig());
+    dispatcher(removeInvitations());
+    dispatcher(resetInvitationConfig());
+  }
+
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -28,7 +44,7 @@ export default function AuthProvider({
         );
         router.replace("/chats");
       } else {
-        dispatcher(removeUser());
+        resetState();
         router.replace("/login");
       }
     });

@@ -9,8 +9,11 @@ const userConfigSlice = createSlice({
     setUserInfoLoading: (state, action) => {
       state.loading = action.payload;
     },
+    resetUserConfig: (state) => {
+      state.loading = true;
+    },
   },
 });
 
-export const { setUserInfoLoading } = userConfigSlice.actions;
+export const { setUserInfoLoading, resetUserConfig } = userConfigSlice.actions;
 export default userConfigSlice.reducer;
