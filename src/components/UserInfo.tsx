@@ -6,6 +6,9 @@ import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { useEffect } from "react";
 import { setUserInfoLoading } from "@/lib/features/user/userConfig";
 import UserInfoSkeleton from "./UserInfoSkeleton";
+import { signOut } from "firebase/auth";
+import { auth } from "@/services/firebase/config";
+import toast from "react-hot-toast";
 
 const UserInfo = () => {
   const { info } = useAppSelector((state) => state.user);
@@ -15,6 +18,22 @@ const UserInfo = () => {
   useEffect(() => {
     if (info) dispatcher(setUserInfoLoading(false));
   }, [info]);
+
+  const handleSignOut = async () => {
+    signOut(auth)
+      .then(() => {
+        toast.success("Logged out successfully", {
+          duration: 3000,
+          position: "top-center",
+        });
+      })
+      .catch((error) => {
+        toast.error("Error logging out", {
+          duration: 3000,
+          position: "top-center",
+        });
+      });
+  };
 
   return loading ? (
     <UserInfoSkeleton />
@@ -32,7 +51,7 @@ const UserInfo = () => {
           <p className="text-base font-medium">{info?.displayName}</p>
         </div>
       </div>
-      <div className="flex gap-4">
+      <div onClick={handleSignOut} className="flex gap-4 cursor-pointer">
         <div className="xl:hidden">
           <p className="text-lg font-medium">Logout</p>
         </div>
