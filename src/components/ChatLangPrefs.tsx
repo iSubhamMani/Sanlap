@@ -23,11 +23,10 @@ import { Settings } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { UserInfo } from "@/lib/features/user/userSlice";
 import { UserDetailsAndPrefs } from "@/types/UserDetailsAndPrefs";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import axios from "axios";
-import { updateConversationLangPrefs } from "@/lib/features/conversationDetails/conversationDetailsSlice";
 import Loader from "./Loader";
-import { pusherClient } from "@/lib/pusher";
+import useLangPrefsUpdate from "@/hooks/useLangPrefsUpdate";
 
 const ChatLangPrefs = ({
   conversationId,
@@ -77,28 +76,7 @@ const ChatLangPrefs = ({
     }
   };
 
-  useEffect(() => {
-    if (!conversationId) return;
-
-    pusherClient.subscribe(`update-lang-prefs-${conversationId}`);
-
-    const handleLangPrefsUpdate = (data: any) => {
-      dispatcher(
-        updateConversationLangPrefs({
-          chatId: conversationId,
-          userId: data.userId,
-          langPrefs: data.langPrefs,
-        })
-      );
-    };
-
-    pusherClient.bind("update-lang-prefs", handleLangPrefsUpdate);
-
-    return () => {
-      pusherClient.unsubscribe(`update-lang-prefs-${conversationId}`);
-      pusherClient.unbind("update-lang-prefs", handleLangPrefsUpdate);
-    };
-  }, [conversationId]);
+  useLangPrefsUpdate({ dispatcher, conversationId });
 
   return (
     <div>

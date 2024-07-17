@@ -3,6 +3,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Conversation } from "./Conversations";
 import { UserInfo } from "@/lib/features/user/userSlice";
 import Link from "next/link";
+import { useEffect } from "react";
+import useLangPrefsUpdate from "@/hooks/useLangPrefsUpdate";
+import { useAppDispatch } from "@/lib/hooks";
 
 const ChatUser = ({
   conversation,
@@ -13,6 +16,9 @@ const ChatUser = ({
 }) => {
   const { members } = conversation;
   const otherMember = members.find((member) => member._id !== currentUser?.uid);
+  const dispatcher = useAppDispatch();
+
+  useLangPrefsUpdate({ dispatcher, conversationId: conversation._id });
 
   if (!otherMember || !currentUser) {
     return null;
