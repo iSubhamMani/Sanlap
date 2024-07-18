@@ -35,11 +35,13 @@ export async function POST(req: CustomRequest) {
       });
     }
 
-    const newConversation = new ConversationModel({
+    const newConversation = await ConversationModel.create({
       members: [{ _id: sender }, { _id: recipient }],
+      lastMessageSender: "",
+      lastMessageContent: "",
+      lastMessageTranslatedContent: "",
+      lastMessagecreatedAt: new Date(),
     });
-
-    await newConversation.save();
 
     if (!newConversation) {
       return Response.json(new ApiError(500, "Error creating conversation"), {
@@ -78,7 +80,12 @@ export async function POST(req: CustomRequest) {
               updatedAt: "$memberDetails.updatedAt",
             },
           },
-          lastMessageAt: { $first: "$lastMessageAt" },
+          lastMessageSender: { $first: "$lastMessageSender" },
+          lastMessageContent: { $first: "$lastMessageContent" },
+          lastMessageTranslatedContent: {
+            $first: "$lastMessageTranslatedContent",
+          },
+          lastMessageCreatedAt: { $first: "$lastMessageCreatedAt" },
           createdAt: { $first: "$createdAt" },
           updatedAt: { $first: "$updatedAt" },
         },
@@ -87,7 +94,10 @@ export async function POST(req: CustomRequest) {
         $project: {
           _id: 1,
           members: 1,
-          lastMessageAt: 1,
+          lastMessageSender: 1,
+          lastMessageContent: 1,
+          lastMessageTranslatedContent: 1,
+          lastMessageCreatedAt: 1,
           createdAt: 1,
           updatedAt: 1,
         },
