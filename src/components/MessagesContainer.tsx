@@ -4,10 +4,13 @@ import { User } from "@/models/user.model";
 import axios from "axios";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import ChatMessage from "./ChatMessage";
-import { pusherClient } from "@/lib/pusher";
 import { MESSAGES_PAGE_SIZE } from "@/lib/constants";
 import InfiniteScroll from "react-infinite-scroll-component";
 import Loader from "./Loader";
+import useNewMessage from "@/hooks/useNewMessage";
+import { useAppDispatch } from "@/lib/hooks";
+import { updateLastMessage } from "@/lib/features/conversations/conversationsSlice";
+import { LastMessage } from "@/models/conversation.model";
 
 export interface CustomMessage {
   _id: string;
@@ -25,6 +28,8 @@ const MessagesContainer = ({ conversationId }: { conversationId: string }) => {
     () => conversationId,
     [conversationId]
   );
+
+  const dispatcher = useAppDispatch();
 
   const [messages, setMessages] = useState<CustomMessage[]>([]);
   const [page, setPage] = useState<number>(1);
@@ -76,21 +81,26 @@ const MessagesContainer = ({ conversationId }: { conversationId: string }) => {
     }
   }, [messages, shouldScroll]);
 
-  useEffect(() => {
-    pusherClient.subscribe(`messages-${conversationId}`);
+  const handleIncomingMessage = async (newMessage: CustomMessage) => {
+    setMessages((prevMessages) => [newMessage, ...prevMessages]);
 
-    const handleIncomingMessage = async (newMessage: CustomMessage) => {
-      setMessages((prevMessages) => [newMessage, ...prevMessages]);
-      setShouldScroll(true);
+    const lastMessage: LastMessage = {
+      lastMessageSender: newMessage.sender._id.toString(),
+      lastMessageContent: newMessage.content,
+      lastMessageTranslatedContent: newMessage.translated_content,
+      lastMessageCreatedAt: newMessage.createdAt,
     };
 
-    pusherClient.bind("new-message", handleIncomingMessage);
+    dispatcher(
+      updateLastMessage({
+        lastMessage,
+        conversationId,
+      })
+    );
+    setShouldScroll(true);
+  };
 
-    return () => {
-      pusherClient.unsubscribe(`messages-${conversationId}`);
-      pusherClient.unbind("new-message", handleIncomingMessage);
-    };
-  }, []);
+  useNewMessage({ conversationId, handler: handleIncomingMessage });
 
   if (!memoizedConversationId) return null;
 
