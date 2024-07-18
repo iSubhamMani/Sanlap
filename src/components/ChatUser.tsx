@@ -3,9 +3,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Conversation } from "./Conversations";
 import { UserInfo } from "@/lib/features/user/userSlice";
 import Link from "next/link";
-import { useEffect } from "react";
 import useLangPrefsUpdate from "@/hooks/useLangPrefsUpdate";
 import { useAppDispatch } from "@/lib/hooks";
+import useNewMessage from "@/hooks/useNewMessage";
+import { CustomMessage } from "./MessagesContainer";
+import { updateLastMessage } from "@/lib/features/conversations/conversationsSlice";
+import { LastMessage } from "@/models/conversation.model";
 
 const ChatUser = ({
   conversation,
@@ -19,6 +22,27 @@ const ChatUser = ({
   const dispatcher = useAppDispatch();
 
   useLangPrefsUpdate({ dispatcher, conversationId: conversation._id });
+
+  const handleLastMessage = async (newMessage: CustomMessage) => {
+    const lastMessage: LastMessage = {
+      lastMessageSender: newMessage.sender._id.toString(),
+      lastMessageContent: newMessage.content,
+      lastMessageTranslatedContent: newMessage.translated_content,
+      lastMessageCreatedAt: newMessage.createdAt,
+    };
+
+    dispatcher(
+      updateLastMessage({
+        lastMessage,
+        conversationId: conversation._id,
+      })
+    );
+  };
+
+  useNewMessage({
+    conversationId: conversation._id,
+    handler: handleLastMessage,
+  });
 
   if (!otherMember || !currentUser) {
     return null;
@@ -36,6 +60,18 @@ const ChatUser = ({
           </Avatar>
           <div className="flex flex-col items-start">
             <p className="text-lg font-medium">{otherMember.displayName}</p>
+            <div>
+              {conversation.lastMessageSender &&
+              conversation.lastMessageSender === currentUser?.uid ? (
+                <p className="text-sm font-medium text-gray-500">
+                  You: {conversation.lastMessageContent}
+                </p>
+              ) : (
+                <p className="text-sm font-medium text-gray-500">
+                  {conversation.lastMessageTranslatedContent}
+                </p>
+              )}
+            </div>
           </div>
         </div>
       </div>
