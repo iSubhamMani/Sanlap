@@ -1,4 +1,5 @@
 import { Conversation } from "@/components/Conversations";
+import { LastMessage } from "@/models/conversation.model";
 import { createSlice } from "@reduxjs/toolkit";
 
 const conversationsSlice = createSlice({
@@ -20,9 +21,27 @@ const conversationsSlice = createSlice({
     removeConversations: (state) => {
       state.conversations = {};
     },
+    updateLastMessage: (state, action) => {
+      const {
+        lastMessage,
+        conversationId,
+      }: { lastMessage: LastMessage; conversationId: string } = action.payload;
+      state.conversations[conversationId].lastMessageContent =
+        lastMessage.lastMessageContent;
+      state.conversations[conversationId].lastMessageSender =
+        lastMessage.lastMessageSender;
+      state.conversations[conversationId].lastMessageTranslatedContent =
+        lastMessage.lastMessageTranslatedContent;
+      state.conversations[conversationId].lastMessagecreatedAt =
+        lastMessage.lastMessageCreatedAt;
+    },
   },
 });
 
-export const { setConversations, addConversation, removeConversations } =
-  conversationsSlice.actions;
+export const {
+  setConversations,
+  addConversation,
+  removeConversations,
+  updateLastMessage,
+} = conversationsSlice.actions;
 export default conversationsSlice.reducer;
