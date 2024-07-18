@@ -1,8 +1,18 @@
 import mongoose, { Schema } from "mongoose";
 
+export interface LastMessage {
+  lastMessageContent: string;
+  lastMessageSender: string;
+  lastMessageTranslatedContent: string;
+  lastMessageCreatedAt: Date;
+}
+
 interface Conversation {
   members: UserPref[];
-  lastMessageAt: Date;
+  lastMessageSender: string;
+  lastMessageContent: string;
+  lastMessageTranslatedContent: string;
+  lastMessagecreatedAt: Date;
 }
 
 interface UserPref {
@@ -13,7 +23,7 @@ interface UserPref {
 
 const userPrefSchema: Schema<UserPref> = new Schema<UserPref>(
   {
-    _id: { type: String, ref: "User", required: true },
+    _id: { type: Schema.Types.String, ref: "User", required: true },
     type_in_lang: { type: String, required: true, default: "english" },
     receive_in_lang: { type: String, required: true, default: "english" },
   },
@@ -23,7 +33,10 @@ const userPrefSchema: Schema<UserPref> = new Schema<UserPref>(
 const conversationSchema: Schema<Conversation> = new Schema<Conversation>(
   {
     members: { type: [userPrefSchema], required: true },
-    lastMessageAt: { type: Date, required: true, default: Date.now() },
+    lastMessageContent: { type: String, default: "" },
+    lastMessageSender: { type: Schema.Types.String, ref: "User" },
+    lastMessageTranslatedContent: { type: String, default: "" },
+    lastMessagecreatedAt: { type: Date, default: new Date() },
   },
   { timestamps: true }
 );
