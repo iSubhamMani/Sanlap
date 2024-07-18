@@ -7,6 +7,7 @@ import { ApiSuccess } from "@/utils/ApiSuccess";
 import { CustomRequest } from "@/utils/CustomRequest";
 import mongoose from "mongoose";
 import axios from "axios";
+import { ConversationModel } from "@/models/conversation.model";
 
 export async function POST(req: CustomRequest) {
   await connectDB();
@@ -97,6 +98,18 @@ export async function POST(req: CustomRequest) {
         $unwind: "$recipient",
       },
     ]);
+
+    await ConversationModel.findOneAndUpdate(
+      {
+        _id: conversationId,
+      },
+      {
+        lastMessageSender: sender,
+        lastMessageContent: content,
+        lastMessageTranslatedContent: translated_content,
+        lastMessageCreatedAt: new Date(),
+      }
+    );
 
     await pusherServer.trigger(
       `messages-${conversationId}`,
