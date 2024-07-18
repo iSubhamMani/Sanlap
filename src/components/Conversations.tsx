@@ -15,11 +15,15 @@ import {
 } from "@/lib/features/conversations/conversationsConfigSlice";
 import { pusherClient } from "@/lib/pusher";
 import ChatUserSkeleton from "./ChatUserSkeleton";
+import { LastMessage } from "@/models/conversation.model";
 
 export interface Conversation {
   _id: string;
   members: [User];
-  lastMessageAt: Date;
+  lastMessageSender: string;
+  lastMessageContent: string;
+  lastMessageTranslatedContent: string;
+  lastMessagecreatedAt: Date;
 }
 
 const Conversations = () => {
