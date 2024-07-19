@@ -9,6 +9,9 @@ import useNewMessage from "@/hooks/useNewMessage";
 import { CustomMessage } from "./MessagesContainer";
 import { updateLastMessage } from "@/lib/features/conversations/conversationsSlice";
 import { LastMessage } from "@/models/conversation.model";
+import convertToReadableDate from "@/utils/convertDate";
+import CustomToast from "./CustomToast";
+import toast from "react-hot-toast";
 
 const ChatUser = ({
   conversation,
@@ -37,6 +40,21 @@ const ChatUser = ({
         conversationId: conversation._id,
       })
     );
+
+    if (newMessage.sender._id === currentUser?.uid) return;
+
+    toast.custom(
+      (t) => (
+        <CustomToast
+          t={t}
+          user={newMessage.sender}
+          primaryMessage={newMessage.translated_content}
+        />
+      ),
+      {
+        duration: 1000 * 60,
+      }
+    );
   };
 
   useNewMessage({
@@ -50,7 +68,7 @@ const ChatUser = ({
 
   return (
     <Link href={`/chats/${conversation._id}`}>
-      <div className="py-2 px-2 flex justify-between items-center gap-3 cursor-pointer rounded-sm hover:bg-muted transition ease-in-out duration-200">
+      <div className="py-2 px-2 flex justify-between items-start gap-3 cursor-pointer rounded-sm hover:bg-muted transition ease-in-out duration-200">
         <div className="flex items-center gap-3">
           <Avatar>
             <AvatarImage src={otherMember.photoURL} />
@@ -63,16 +81,25 @@ const ChatUser = ({
             <div>
               {conversation.lastMessageSender &&
               conversation.lastMessageSender === currentUser?.uid ? (
-                <p className="text-sm font-medium text-gray-500">
+                <p className="text-sm font-medium text-gray-500 line-clamp-1">
                   You: {conversation.lastMessageContent}
                 </p>
               ) : (
-                <p className="text-sm font-medium text-gray-500">
+                <p className="text-sm font-medium text-gray-500 line-clamp-1">
                   {conversation.lastMessageTranslatedContent}
                 </p>
               )}
             </div>
           </div>
+        </div>
+        <div>
+          {conversation.lastMessagecreatedAt && (
+            <p className="mt-1 text-xs font-medium text-primary no-truncate">
+              {convertToReadableDate(
+                conversation.lastMessagecreatedAt.toString()
+              )}
+            </p>
+          )}
         </div>
       </div>
     </Link>
