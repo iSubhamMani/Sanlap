@@ -78,3 +78,9 @@
     opacity: 1;
   }
 }
+
+.no-truncate {
+  white-space: nowrap; /* Prevents the text from wrapping */
+  overflow: hidden; /* Hides any overflow text */
+  text-overflow: clip; /* Ensures that the overflowing text is clipped, instead of showing ellipses */
+}
