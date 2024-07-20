@@ -52,7 +52,7 @@ const ChatUser = ({
         />
       ),
       {
-        duration: 1000 * 60,
+        duration: 3000,
       }
     );
   };
@@ -93,10 +93,10 @@ const ChatUser = ({
           </div>
         </div>
         <div>
-          {conversation.lastMessagecreatedAt && (
+          {conversation.lastMessageCreatedAt && (
             <p className="mt-1 text-xs font-medium text-primary no-truncate">
               {convertToReadableDate(
-                conversation.lastMessagecreatedAt.toString()
+                conversation.lastMessageCreatedAt.toString()
               )}
             </p>
           )}
