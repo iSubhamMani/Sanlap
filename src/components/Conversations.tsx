@@ -23,7 +23,7 @@ export interface Conversation {
   lastMessageSender: string;
   lastMessageContent: string;
   lastMessageTranslatedContent: string;
-  lastMessagecreatedAt: Date;
+  lastMessageCreatedAt: Date;
 }
 
 const Conversations = () => {
@@ -85,7 +85,7 @@ const Conversations = () => {
         </div>
       ) : Object.entries(conversations).length === 0 ? (
         <div>
-          <p className="text-slate-500 text-base text-balance md:text-lg lg:text-xl text-center mt-16 text-balance">
+          <p className="text-slate-500 text-base text-balance md:text-lg lg:text-xl text-center mt-16">
             No conversations found. Start by searching for a user to chat with.
           </p>
         </div>

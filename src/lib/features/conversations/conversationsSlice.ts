@@ -32,7 +32,7 @@ const conversationsSlice = createSlice({
         lastMessage.lastMessageSender;
       state.conversations[conversationId].lastMessageTranslatedContent =
         lastMessage.lastMessageTranslatedContent;
-      state.conversations[conversationId].lastMessagecreatedAt =
+      state.conversations[conversationId].lastMessageCreatedAt =
         lastMessage.lastMessageCreatedAt;
     },
   },

@@ -12,7 +12,7 @@ interface Conversation {
   lastMessageSender: string;
   lastMessageContent: string;
   lastMessageTranslatedContent: string;
-  lastMessagecreatedAt: Date;
+  lastMessageCreatedAt?: Date;
 }
 
 interface UserPref {
@@ -36,7 +36,7 @@ const conversationSchema: Schema<Conversation> = new Schema<Conversation>(
     lastMessageContent: { type: String, default: "" },
     lastMessageSender: { type: Schema.Types.String, ref: "User" },
     lastMessageTranslatedContent: { type: String, default: "" },
-    lastMessagecreatedAt: { type: Date, default: new Date() },
+    lastMessageCreatedAt: { type: Date },
   },
   { timestamps: true }
 );
