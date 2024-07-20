@@ -40,7 +40,6 @@ export async function POST(req: CustomRequest) {
       lastMessageSender: "",
       lastMessageContent: "",
       lastMessageTranslatedContent: "",
-      lastMessagecreatedAt: new Date(),
     });
 
     if (!newConversation) {
