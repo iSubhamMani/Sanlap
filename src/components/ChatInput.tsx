@@ -3,12 +3,13 @@
 import React, { useMemo, useState } from "react";
 import { Textarea } from "./ui/textarea";
 import { Button } from "./ui/button";
-import { Send } from "lucide-react";
+import { LoaderCircle, Send } from "lucide-react";
 import axios from "axios";
 import { UserInfo } from "@/lib/features/user/userSlice";
 import { User } from "@/models/user.model";
 import { useAppSelector } from "@/lib/hooks";
 import { UserDetailsAndPrefs } from "@/types/UserDetailsAndPrefs";
+import toast from "react-hot-toast";
 
 const ChatInput = ({
   sender,
@@ -23,6 +24,7 @@ const ChatInput = ({
   const { conversationDetails } = useAppSelector(
     (state) => state.conversationDetails
   );
+  const [sending, setSending] = useState(false);
 
   const { source_lang, target_lang } = useMemo(() => {
     if (!conversationDetails[conversationId])
@@ -43,7 +45,7 @@ const ChatInput = ({
 
   const sendMessage = async () => {
     if (!message) return;
-    setMessage("");
+    setSending(true);
 
     // Send message to the server
     try {
@@ -65,10 +67,15 @@ const ChatInput = ({
       );
 
       if (response.data?.success) {
-        console.log("Message sent successfully");
+        setMessage("");
       }
     } catch (error) {
-      console.log("Error sending message: ", error);
+      toast.error("Error sending message", {
+        duration: 4000,
+        position: "top-center",
+      });
+    } finally {
+      setSending(false);
     }
   };
 
@@ -86,7 +93,11 @@ const ChatInput = ({
         size="icon"
         className="rounded-full"
       >
-        <Send className="w-6 h-6 text-primary" />
+        {sending ? (
+          <LoaderCircle className="animate-spin w-6 h-6 text-primary" />
+        ) : (
+          <Send className="w-6 h-6 text-primary" />
+        )}
       </Button>
     </div>
   );
