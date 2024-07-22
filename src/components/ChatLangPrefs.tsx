@@ -107,6 +107,9 @@ const ChatLangPrefs = ({
                   <label className="font-bold text-sm" htmlFor="type-in">
                     Type in
                   </label>
+                  <p className="text-gray-500 text-xs">
+                    *This option helps in better translation
+                  </p>
                   <SelectTrigger id="type-in" className="w-full mt-2">
                     <SelectValue placeholder="Type in" />
                   </SelectTrigger>
