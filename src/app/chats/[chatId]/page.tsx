@@ -1,16 +1,13 @@
 "use client";
 
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import axios from "axios";
-import { ArrowLeft, UserRound } from "lucide-react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
-
 import ChatInput from "@/components/ChatInput";
 import MessagesContainer from "@/components/MessagesContainer";
 import { addConversationDetails } from "@/lib/features/conversationDetails/conversationDetailsSlice";
-import ChatLangPrefs from "@/components/ChatLangPrefs";
+import ChatNavbar from "@/components/ChatNavbar";
 
 export default function ChatDetails() {
   const { chatId } = useParams();
@@ -21,7 +18,6 @@ export default function ChatDetails() {
   const { conversationDetails } = useAppSelector(
     (store) => store.conversationDetails
   );
-  const navigate = useRouter();
   const dispatcher = useAppDispatch();
 
   const getChatDetails = useCallback(async () => {
@@ -61,29 +57,10 @@ export default function ChatDetails() {
   return (
     <div className="w-full rounded-lg bg-background ">
       <div className="mx-auto w-full max-w-3xl min-h-[100dvh] flex flex-col shadow-lg">
-        <div className="z-50 sticky top-0 flex items-center justify-between border-b bg-card px-6 py-4">
-          <div className="flex items-center gap-3">
-            <ArrowLeft
-              className="cursor-pointer"
-              onClick={() => navigate.back()}
-            />
-            <Avatar>
-              <AvatarImage src={otherMember?.photoURL} />
-              <AvatarFallback>
-                <UserRound />
-              </AvatarFallback>
-            </Avatar>
-            <div className="text-sm font-medium">
-              {otherMember?.displayName}
-            </div>
-          </div>
-          {conversationDetails[memoizedChatId.toString()] && (
-            <ChatLangPrefs
-              conversationId={memoizedChatId.toString()}
-              currentUser={info}
-            />
-          )}
-        </div>
+        <ChatNavbar
+          otherMember={otherMember}
+          chatId={memoizedChatId.toString()}
+        />
         <MessagesContainer conversationId={memoizedChatId.toString()} />
         <p className="mb-4 text-center text-balance text-sm text-slate-500">
           This is the start of your epic conversation with{" "}
