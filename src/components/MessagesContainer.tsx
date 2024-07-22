@@ -2,13 +2,19 @@
 
 import { User } from "@/models/user.model";
 import axios from "axios";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import ChatMessage from "./ChatMessage";
 import { MESSAGES_PAGE_SIZE } from "@/lib/constants";
 import InfiniteScroll from "react-infinite-scroll-component";
 import Loader from "./Loader";
 import useNewMessage from "@/hooks/useNewMessage";
-import { useAppDispatch } from "@/lib/hooks";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { updateLastMessage } from "@/lib/features/conversations/conversationsSlice";
 import { LastMessage } from "@/models/conversation.model";
 
@@ -120,8 +126,29 @@ const MessagesContainer = ({ conversationId }: { conversationId: string }) => {
         }
       >
         <div className="grid gap-5 px-6 py-8">
-          {messages.map((message) => {
-            return <ChatMessage key={message._id} message={message} />;
+          {messages.map((message, index) => {
+            const prevMessage = index === 0 ? null : messages[index - 1];
+            const showDate =
+              !prevMessage ||
+              new Date(
+                prevMessage.createdAt.toString()
+              ).toLocaleDateString() !==
+                new Date(message.createdAt.toString()).toLocaleDateString();
+
+            return (
+              <React.Fragment key={message._id}>
+                {showDate && (
+                  <p className="text-center text-xs md:text-sm text-gray-500 font-medium">
+                    {new Date(
+                      message.createdAt.toString()
+                    ).toLocaleDateString()}
+                  </p>
+                )}
+                <div>
+                  <ChatMessage message={message} />
+                </div>
+              </React.Fragment>
+            );
           })}
         </div>
       </InfiniteScroll>
