@@ -9,7 +9,7 @@ import useNewMessage from "@/hooks/useNewMessage";
 import { CustomMessage } from "./MessagesContainer";
 import { updateLastMessage } from "@/lib/features/conversations/conversationsSlice";
 import { LastMessage } from "@/models/conversation.model";
-import convertToReadableDate from "@/utils/convertDate";
+import { convertToReadableDate } from "@/utils/convertDate";
 import CustomToast from "./CustomToast";
 import toast from "react-hot-toast";
 
