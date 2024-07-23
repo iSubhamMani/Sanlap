@@ -1,26 +1,21 @@
-import { formatDistanceToNow, format } from "date-fns";
-import { enUS } from "date-fns/locale";
+import moment from "moment";
 
-function convertToReadableDate(dateString: string): string {
-  const date = new Date(dateString);
-  const now = new Date();
-  const diff = now.getTime() - date.getTime();
+export function convertToReadableDate(dateString: string): string {
+  const now = moment();
+  const messageDate = moment(dateString);
+  const diffInMinutes = now.diff(messageDate, "minutes");
 
-  if (diff < 60000) {
-    // less than 1 minute
+  if (diffInMinutes < 1) {
     return "just now";
-  } else if (diff < 3600000) {
-    // less than 1 hour
-    return formatDistanceToNow(date, { addSuffix: true, locale: enUS });
-  } else if (diff < 86400000) {
-    // less than 1 day
-    return formatDistanceToNow(date, { addSuffix: true, locale: enUS });
-  } else if (diff < 172800000) {
-    // less than 2 days
+  } else if (diffInMinutes < 60) {
+    return `${diffInMinutes} minutes ago`;
+  } else if (diffInMinutes < 1440) {
+    // 1440 minutes in a day
+    return messageDate.format("hh:mm a");
+  } else if (diffInMinutes < 2880) {
+    // 2880 minutes in 2 days
     return "yesterday";
   } else {
-    return format(date, "MMMM d, yyyy", { locale: enUS });
+    return messageDate.format("DD/MM/YY");
   }
 }
-
-export default convertToReadableDate;
