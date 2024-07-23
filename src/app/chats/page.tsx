@@ -23,7 +23,7 @@ const ChatsPage = () => {
       <header className="mb-2 lg:mb-8">
         <div>
           <h1 className="text-primary text-2xl font-bold tracking-tighter sm:text-3xl xl:text-4xl/none">
-            Sync
+            Echo
           </h1>
         </div>
       </header>

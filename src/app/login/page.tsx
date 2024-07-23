@@ -57,12 +57,15 @@ export default function LoginPage() {
           <div className="container px-4 md:px-6">
             <div className="flex flex-col justify-center items-center space-y-4">
               <div className="space-y-2 text-center">
+                <h1 className="text-primary text-4xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none">
+                  Echo
+                </h1>
                 <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none">
-                  Unlock the Power of AI Conversation
+                  Type locally, converse globally
                 </h1>
                 <p className="max-w-[600px] mx-auto text-muted-foreground md:text-xl">
-                  Our AI chat app revolutionizes the way you communicate,
-                  offering seamless and intelligent conversations.
+                  Overcome language barriers and connect with people from around
+                  the world in real-time with the power of AI.
                 </p>
               </div>
               <div className="flex flex-col gap-2 min-[400px]:flex-row">
@@ -78,9 +81,9 @@ export default function LoginPage() {
           </div>
         </section>
       </main>
-      <footer className="flex flex-col gap-2 sm:flex-row py-6 w-full shrink-0 items-center px-4 md:px-6 border-t">
-        <p className="text-xs text-muted-foreground">
-          &copy; 2024 AI Chat App. All rights reserved.
+      <footer className="sm:flex-row py-6 w-full shrink-0 items-center px-4 md:px-6 border-t">
+        <p className="text-xs text-center text-muted-foreground">
+          &copy; {new Date().getFullYear()} Echo. All rights reserved.
         </p>
       </footer>
     </div>
