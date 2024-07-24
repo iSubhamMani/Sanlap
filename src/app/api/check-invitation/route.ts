@@ -4,6 +4,8 @@ import { ApiError } from "@/utils/ApiError";
 import { ApiSuccess } from "@/utils/ApiSuccess";
 import { CustomRequest } from "@/utils/CustomRequest";
 
+export const runtime = "edge";
+
 export async function GET(req: CustomRequest) {
   await connectDB();
 

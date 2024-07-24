@@ -3,6 +3,8 @@ import { UserModel } from "@/models/user.model";
 import { ApiError } from "@/utils/ApiError";
 import { ApiSuccess } from "@/utils/ApiSuccess";
 
+export const runtime = "edge";
+
 export async function GET(req: Request, res: Response) {
   await connectDB();
 

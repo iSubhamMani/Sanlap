@@ -5,6 +5,8 @@ import { ApiError } from "@/utils/ApiError";
 import { ApiSuccess } from "@/utils/ApiSuccess";
 import { CustomRequest } from "@/utils/CustomRequest";
 
+export const runtime = "edge";
+
 type UpdateLangPrefsRequest = {
   chatId: string;
   receive_in_lang: string;

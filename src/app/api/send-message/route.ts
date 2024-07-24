@@ -9,6 +9,8 @@ import mongoose from "mongoose";
 import axios from "axios";
 import { ConversationModel } from "@/models/conversation.model";
 
+export const runtime = "edge";
+
 export async function POST(req: CustomRequest) {
   await connectDB();
 

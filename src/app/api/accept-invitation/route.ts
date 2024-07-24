@@ -8,6 +8,8 @@ import { ApiSuccess } from "@/utils/ApiSuccess";
 import { CustomRequest } from "@/utils/CustomRequest";
 import mongoose from "mongoose";
 
+export const runtime = "edge";
+
 export async function POST(req: CustomRequest) {
   await connectDB();
 
