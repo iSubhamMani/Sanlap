@@ -20,6 +20,7 @@ import { pusherClient } from "@/lib/pusher";
 import InvitationCardSkeleton from "./InvitationCardSkeleton";
 import toast from "react-hot-toast";
 import CustomToast from "./CustomToast";
+import { ScrollArea } from "./ui/scroll-area";
 
 const InvitationBox = () => {
   const invitation = useAppSelector((state) => state.invitation);
@@ -42,7 +43,10 @@ const InvitationBox = () => {
         dispatcher(setHasMoreInvitations(false));
       }
     } catch (error) {
-      console.log("Error getting invitations: ", error);
+      toast.error("Error getting invitations", {
+        duration: 4000,
+        position: "top-center",
+      });
     } finally {
       dispatcher(setInvitationLoading(false));
     }
@@ -98,24 +102,40 @@ const InvitationBox = () => {
             <Mail className="w-6 h-6" />
           </CardTitle>
         </CardHeader>
-        <CardContent className="flex flex-col gap-6">
+        <CardContent className="flex flex-col pb-2 gap-6">
           {invitationLoading ? (
             <>
               <InvitationCardSkeleton />
               <InvitationCardSkeleton />
               <InvitationCardSkeleton />
             </>
-          ) : Object.entries(invitation.invitations).length > 0 ? (
-            Object.entries(invitation.invitations).map(([, invitation]) => {
-              return (
-                <InvitationCard
-                  invitation={invitation}
-                  key={invitation?._id as string}
-                />
-              );
-            })
           ) : (
-            <p className="text-slate-500 text-sm text-center">No invitations</p>
+            <ScrollArea
+              className={`${
+                Object.entries(invitation.invitations).length > 0
+                  ? "h-[160px] w-full"
+                  : "h-[40px]"
+              }`}
+            >
+              <div className="flex flex-col gap-6 w-full h-full">
+                {Object.entries(invitation.invitations).length > 0 ? (
+                  Object.entries(invitation.invitations).map(
+                    ([, invitation]) => {
+                      return (
+                        <InvitationCard
+                          invitation={invitation}
+                          key={invitation?._id as string}
+                        />
+                      );
+                    }
+                  )
+                ) : (
+                  <p className="text-slate-500 text-sm text-center">
+                    No invitations
+                  </p>
+                )}
+              </div>
+            </ScrollArea>
           )}
         </CardContent>
       </Card>
