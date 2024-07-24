@@ -1,23 +1,25 @@
 import { TranslationRequest } from "@/types/TranslationRequest";
 import { ApiError } from "@/utils/ApiError";
 import { ApiSuccess } from "@/utils/ApiSuccess";
-import { getRequestContext } from "@cloudflare/next-on-pages";
+import { getOptionalRequestContext } from "@cloudflare/next-on-pages";
 
 export const runtime = "edge";
 
 export async function POST(req: Request) {
   try {
+    const requestContext = getOptionalRequestContext();
+    if (!requestContext) {
+      return;
+    }
+
     const { source_lang, target_lang, text } =
       (await req.json()) as TranslationRequest;
 
-    const response = await getRequestContext().env.AI.run(
-      "@cf/meta/m2m100-1.2b",
-      {
-        text,
-        source_lang,
-        target_lang,
-      }
-    );
+    const response = await requestContext.env.AI.run("@cf/meta/m2m100-1.2b", {
+      text,
+      source_lang,
+      target_lang,
+    });
 
     if (!response.translated_text) {
       return Response.json(new ApiError(500, "Failed to translate content"), {
