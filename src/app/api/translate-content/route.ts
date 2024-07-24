@@ -32,7 +32,7 @@ export async function POST(req: Request) {
       )
     );
   } catch (error: any) {
-    return Response.json(new ApiError(500, error.message), {
+    return Response.json(new ApiError(500, error), {
       status: 500,
     });
   }

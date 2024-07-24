@@ -39,7 +39,7 @@ export async function POST(req: CustomRequest) {
 
     if (source_lang !== target_lang) {
       const response = await axios.post(
-        `http://localhost:3000/api/translate-content`,
+        `https://echo-six-drab.vercel.app/api/translate-content`,
         {
           source_lang,
           target_lang,
