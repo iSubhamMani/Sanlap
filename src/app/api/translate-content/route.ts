@@ -8,7 +8,12 @@ export const runtime = "edge";
 export async function POST(req: Request) {
   try {
     const ctx = getRequestContext();
-    console.log(ctx);
+
+    if (!ctx) {
+      return Response.json(new ApiError(500, ctx), {
+        status: 500,
+      });
+    }
 
     const { source_lang, target_lang, text } =
       (await req.json()) as TranslationRequest;
