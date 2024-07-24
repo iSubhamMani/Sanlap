@@ -34,7 +34,7 @@ export async function POST(req: Request) {
       )
     );
   } catch (error: any) {
-    return Response.json(new ApiError(500, error), {
+    return Response.json(new ApiError(500, error.message), {
       status: 500,
     });
   }
