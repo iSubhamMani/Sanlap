@@ -13,8 +13,6 @@ type CustomRequest = {
   photoURL?: string;
 };
 
-export const runtime = "edge";
-
 export async function POST(req: Request) {
   await connectDB();
 
