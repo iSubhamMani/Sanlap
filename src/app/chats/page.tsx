@@ -19,7 +19,7 @@ const ChatsPage = () => {
   const { invitations } = useAppSelector((state) => state.invitation);
 
   return (
-    <div className="min-h-[100dvh] flex flex-col px-6 md:px-16 pt-4 md:pt-6 pb-8">
+    <div className="min-h-[100dvh] flex flex-col px-6 2xl:px-16 pt-4 md:pt-6 pb-8">
       <header className="mb-2 lg:mb-8">
         <div>
           <h1 className="text-primary text-2xl font-bold tracking-tighter sm:text-3xl xl:text-4xl/none">
