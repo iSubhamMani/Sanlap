@@ -27,6 +27,7 @@ import { useMemo, useState } from "react";
 import axios from "axios";
 import Loader from "./Loader";
 import useLangPrefsUpdate from "@/hooks/useLangPrefsUpdate";
+import toast from "react-hot-toast";
 
 const ChatLangPrefs = ({
   conversationId,
@@ -70,7 +71,10 @@ const ChatLangPrefs = ({
         }
       );
     } catch (error) {
-      console.log("Error updating preferences: ", error);
+      toast.error("Error updating preferences", {
+        duration: 4000,
+        position: "top-center",
+      });
     } finally {
       setLoading(false);
     }

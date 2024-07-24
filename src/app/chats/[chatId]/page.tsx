@@ -8,6 +8,7 @@ import ChatInput from "@/components/ChatInput";
 import MessagesContainer from "@/components/MessagesContainer";
 import { addConversationDetails } from "@/lib/features/conversationDetails/conversationDetailsSlice";
 import ChatNavbar from "@/components/ChatNavbar";
+import toast from "react-hot-toast";
 
 export default function ChatDetails() {
   const { chatId } = useParams();
@@ -36,7 +37,10 @@ export default function ChatDetails() {
         dispatcher(addConversationDetails(response.data.data));
       }
     } catch (error) {
-      console.error(error);
+      toast.error("Error getting chat details", {
+        duration: 4000,
+        position: "top-center",
+      });
     }
   }, [memoizedChatId]);
 

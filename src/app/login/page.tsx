@@ -4,6 +4,8 @@ import { auth } from "@/services/firebase/config";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import axios from "axios";
 import { useState } from "react";
+import { LoaderCircle } from "lucide-react";
+import toast from "react-hot-toast";
 
 type User = {
   _id: string;
@@ -13,12 +15,13 @@ type User = {
 };
 
 export default function LoginPage() {
-  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const signInWithGoogle = () => {
     const provider = new GoogleAuthProvider();
     signInWithPopup(auth, provider)
       .then(async (result) => {
+        setLoading(true);
         const user = result.user;
 
         await saveUserToDB({
@@ -27,26 +30,27 @@ export default function LoginPage() {
           displayName: user.displayName,
           photoURL: user.photoURL,
         });
+        setLoading(false);
       })
       .catch((error) => {
-        setError(error.message);
+        setLoading(false);
+        toast.error("Error signin in. Please try again", {
+          duration: 4000,
+          position: "top-center",
+        });
       });
   };
 
   async function saveUserToDB(user: User) {
-    try {
-      const response = await axios.post("/api/login", {
-        _id: user._id,
-        email: user.email,
-        displayName: user.displayName,
-        photoURL: user.photoURL,
-      });
+    const response = await axios.post("/api/login", {
+      _id: user._id,
+      email: user.email,
+      displayName: user.displayName,
+      photoURL: user.photoURL,
+    });
 
-      if (response.data?.success) {
-        localStorage.setItem("token", response.data?.data.token);
-      }
-    } catch (error: any) {
-      setError(error.message);
+    if (response.data?.success) {
+      localStorage.setItem("token", response.data?.data.token);
     }
   }
 
@@ -73,8 +77,14 @@ export default function LoginPage() {
                   className="inline-flex h-10 items-center justify-center rounded-md px-8 text-sm font-medium shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
                   onClick={signInWithGoogle}
                 >
-                  <ChromeIcon className="mr-2 h-4 w-4" />
-                  Sign in with Google
+                  {loading ? (
+                    <LoaderCircle className="animate-spin w-5 h-5 text-white" />
+                  ) : (
+                    <>
+                      <ChromeIcon className="mr-2 h-4 w-4" />
+                      Sign in with Google
+                    </>
+                  )}
                 </Button>
               </div>
             </div>

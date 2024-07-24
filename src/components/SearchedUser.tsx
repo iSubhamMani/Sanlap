@@ -15,6 +15,7 @@ import {
 import axios from "axios";
 import { UserInfo } from "@/lib/features/user/userSlice";
 import { useEffect, useMemo, useState } from "react";
+import toast from "react-hot-toast";
 
 const SearchedUser = ({
   user,
@@ -42,9 +43,7 @@ const SearchedUser = ({
         if (response.data?.success) {
           setInviteStatus(response.data.data?.inviteStatus as string);
         }
-      } catch (error: any) {
-        console.log("Error checking invitation: ", error);
-      }
+      } catch (error: any) {}
     };
 
     checkInvitationStatus();
@@ -71,7 +70,10 @@ const SearchedUser = ({
         console.log("Invitation sent");
       }
     } catch (error) {
-      console.log("Something went wrong: ", error);
+      toast.error("Error sending invitation", {
+        duration: 4000,
+        position: "top-center",
+      });
     }
   };
 
@@ -94,7 +96,10 @@ const SearchedUser = ({
         setInviteStatus("unsent");
       }
     } catch (error) {
-      console.log("Something went wrong: ", error);
+      toast.error("Error canceling invitation", {
+        duration: 4000,
+        position: "top-center",
+      });
     }
   };
 

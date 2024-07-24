@@ -4,13 +4,13 @@ import { SearchIcon } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Input } from "./ui/input";
 import { ScrollArea } from "./ui/scroll-area";
-import Loader from "./Loader";
 import SearchedUser from "./SearchedUser";
 import { debounce } from "lodash";
 import axios from "axios";
 import { useAppSelector } from "@/lib/hooks";
 import { User } from "@/models/user.model";
 import SearchedUserSkeleton from "./SearchedUserSkeleton";
+import toast from "react-hot-toast";
 
 const Search = () => {
   const [state, setState] = useState({
@@ -36,7 +36,10 @@ const Search = () => {
         }));
       }
     } catch (error) {
-      console.log("Something went wrong: ", error);
+      toast.error("Something went wrong. Please try again", {
+        duration: 4000,
+        position: "top-center",
+      });
     } finally {
       setState((prevState) => ({ ...prevState, searchLoading: false }));
     }

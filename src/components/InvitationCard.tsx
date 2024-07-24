@@ -7,6 +7,7 @@ import {
   CustomInvitation,
   deleteInvitation,
 } from "@/lib/features/invitation/invitationSlice";
+import toast from "react-hot-toast";
 
 interface InvitationCardProps {
   invitation: CustomInvitation;
@@ -34,7 +35,10 @@ const Invitation: React.FC<InvitationCardProps> = ({ invitation }) => {
         dispatcher(deleteInvitation(invitation._id));
       }
     } catch (error) {
-      console.log("Error accepting invitation: ", error);
+      toast.error("Error accepting invitation", {
+        duration: 4000,
+        position: "top-center",
+      });
     }
   };
 
@@ -57,7 +61,10 @@ const Invitation: React.FC<InvitationCardProps> = ({ invitation }) => {
         dispatcher(deleteInvitation(invitation._id));
       }
     } catch (error) {
-      console.log("Error rejecting invitation: ", error);
+      toast.error("Error rejecting invitation", {
+        duration: 4000,
+        position: "top-center",
+      });
     }
   };
 
@@ -81,7 +88,7 @@ const Invitation: React.FC<InvitationCardProps> = ({ invitation }) => {
       </div>
       <div className="flex gap-2">
         <Button
-          className="text-xs text-primary font-bold hover:text-primary"
+          className="p-2 md:p-4 text-xs text-primary font-bold hover:text-primary"
           variant="outline"
           size="sm"
           onClick={acceptInvitation}

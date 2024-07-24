@@ -2,21 +2,16 @@
 
 import { User } from "@/models/user.model";
 import axios from "axios";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import ChatMessage from "./ChatMessage";
 import { MESSAGES_PAGE_SIZE } from "@/lib/constants";
 import InfiniteScroll from "react-infinite-scroll-component";
 import Loader from "./Loader";
 import useNewMessage from "@/hooks/useNewMessage";
-import { useAppDispatch, useAppSelector } from "@/lib/hooks";
+import { useAppDispatch } from "@/lib/hooks";
 import { updateLastMessage } from "@/lib/features/conversations/conversationsSlice";
 import { LastMessage } from "@/models/conversation.model";
+import toast from "react-hot-toast";
 
 export interface CustomMessage {
   _id: string;
@@ -68,7 +63,10 @@ const MessagesContainer = ({ conversationId }: { conversationId: string }) => {
         setShouldScroll(false);
       }
     } catch (error) {
-      console.log("Error fetching messages: ", error);
+      toast.error("Error getting messages", {
+        duration: 4000,
+        position: "top-center",
+      });
     } finally {
       setLoading(false);
     }

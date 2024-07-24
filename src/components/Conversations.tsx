@@ -2,7 +2,7 @@
 
 import axios from "axios";
 import ChatUser from "./ChatUser";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 import { User } from "@/models/user.model";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import {
@@ -15,7 +15,7 @@ import {
 } from "@/lib/features/conversations/conversationsConfigSlice";
 import { pusherClient } from "@/lib/pusher";
 import ChatUserSkeleton from "./ChatUserSkeleton";
-import { LastMessage } from "@/models/conversation.model";
+import toast from "react-hot-toast";
 
 export interface Conversation {
   _id: string;
@@ -47,7 +47,10 @@ const Conversations = () => {
         dispatcher(setHasMoreConversations(false));
       }
     } catch (error) {
-      console.log("Error fetching conversations: ", error);
+      toast.error("Error getting conversations", {
+        duration: 4000,
+        position: "top-center",
+      });
     } finally {
       dispatcher(setLoading(false));
     }
