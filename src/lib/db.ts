@@ -13,7 +13,7 @@ export const connectDB = async (): Promise<void> => {
 
   try {
     const connectionInstance = await mongoose.connect(
-      (process.env.NEXT_PUBLIC_MONGODB_URI as string) || ""
+      (process.env.NEXT_PUBLIC_MONGODB_URI as string) + "/echo-prod" || ""
     );
     connection.isConnected = connectionInstance.connections[0].readyState;
     console.log("Connected to Database");
