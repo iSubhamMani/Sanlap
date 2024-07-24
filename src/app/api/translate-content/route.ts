@@ -9,12 +9,6 @@ export async function POST(req: Request) {
   try {
     const ctx = getRequestContext();
 
-    if (!ctx) {
-      return Response.json(new ApiError(500, ctx), {
-        status: 500,
-      });
-    }
-
     const { source_lang, target_lang, text } =
       (await req.json()) as TranslationRequest;
 
