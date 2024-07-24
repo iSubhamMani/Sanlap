@@ -1,21 +1,19 @@
 import { TranslationRequest } from "@/types/TranslationRequest";
 import { ApiError } from "@/utils/ApiError";
 import { ApiSuccess } from "@/utils/ApiSuccess";
-import { getOptionalRequestContext } from "@cloudflare/next-on-pages";
+import { getRequestContext } from "@cloudflare/next-on-pages";
 
 export const runtime = "edge";
 
 export async function POST(req: Request) {
   try {
-    const requestContext = getOptionalRequestContext();
-    if (!requestContext) {
-      return;
-    }
+    const ctx = getRequestContext();
+    console.log(ctx);
 
     const { source_lang, target_lang, text } =
       (await req.json()) as TranslationRequest;
 
-    const response = await requestContext.env.AI.run("@cf/meta/m2m100-1.2b", {
+    const response = await ctx.env.AI.run("@cf/meta/m2m100-1.2b", {
       text,
       source_lang,
       target_lang,
