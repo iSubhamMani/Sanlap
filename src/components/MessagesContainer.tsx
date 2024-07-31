@@ -41,8 +41,9 @@ const MessagesContainer = ({ conversationId }: { conversationId: string }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [hasMore, setHasMore] = useState<boolean>(false);
 
-  const loadMessages = useCallback(async () => {
+  const loadMessages = async () => {
     if (!memoizedConversationId) return;
+    console.log("Has more: ", hasMore);
     setLoading(true);
     try {
       const response = await axios.get(
@@ -70,7 +71,7 @@ const MessagesContainer = ({ conversationId }: { conversationId: string }) => {
     } finally {
       setLoading(false);
     }
-  }, [memoizedPage]);
+  };
 
   useEffect(() => {
     loadMessages();

@@ -7,8 +7,6 @@ import { ApiSuccess } from "@/utils/ApiSuccess";
 import { CustomRequest } from "@/utils/CustomRequest";
 import mongoose from "mongoose";
 
-export const runtime = "edge";
-
 // create a new invitation
 export async function POST(req: CustomRequest) {
   await connectDB();
@@ -113,6 +111,8 @@ export async function GET(req: CustomRequest) {
         $sort: { createdAt: -1 },
       },
     ]);
+
+    console.log(invitations);
 
     return Response.json(new ApiSuccess(200, "Invitations", invitations), {
       status: 200,

@@ -6,10 +6,8 @@ import { ApiError } from "@/utils/ApiError";
 import { ApiSuccess } from "@/utils/ApiSuccess";
 import { CustomRequest } from "@/utils/CustomRequest";
 import mongoose from "mongoose";
-import axios from "axios";
 import { ConversationModel } from "@/models/conversation.model";
-
-export const runtime = "edge";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export async function POST(req: CustomRequest) {
   await connectDB();
@@ -40,21 +38,17 @@ export async function POST(req: CustomRequest) {
     let translated_content = content;
 
     if (source_lang !== target_lang) {
-      const response = await axios.post(
-        `https://echo-six-drab.vercel.app/api/translate-content`,
-        {
-          source_lang,
-          target_lang,
-          text: content,
-        }
+      const genAI = new GoogleGenerativeAI(
+        process.env.NEXT_PUBLIC_GEMINI_API_KEY!
       );
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-      if (response.status !== 200) {
-        return Response.json(new ApiError(500, response.data?.message), {
-          status: 500,
-        });
-      }
-      translated_content = response.data.data;
+      const prompt = `Translate the following text from ${source_lang} to ${target_lang} and only include the translated text: ${content}`;
+
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      const text = response.text();
+      translated_content = text;
     }
 
     const message = new MessageModel({
