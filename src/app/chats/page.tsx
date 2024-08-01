@@ -19,8 +19,8 @@ const ChatsPage = () => {
   const { invitations } = useAppSelector((state) => state.invitation);
 
   return (
-    <div className="min-h-[100dvh] flex flex-col px-6 2xl:px-16 pt-4 md:pt-6 pb-8">
-      <header className="mb-2 lg:mb-8">
+    <div className="min-h-[100dvh] flex flex-col pt-4 md:pt-6 pb-8">
+      <header className="px-3 2xl:px-16 mb-2 lg:mb-8">
         <div>
           <h1 className="text-primary text-2xl font-bold tracking-tighter sm:text-3xl xl:text-4xl/none">
             Echo
@@ -28,7 +28,7 @@ const ChatsPage = () => {
         </div>
       </header>
       <main className="flex flex-col xl:flex-row flex-1">
-        <section className="xl:w-1/3 xl:pr-6">
+        <section className="px-3 2xl:px-16 xl:w-1/3 xl:pr-6">
           <div className="sticky top-24 flex flex-col-reverse gap-2 sm:gap-4 lg:gap-0 xl:flex-col h-full">
             <Search />
             <div className="flex items-center justify-end gap-6">
@@ -73,7 +73,7 @@ const ChatsPage = () => {
             <Separator orientation="vertical" />
           </div>
           <div className="w-full mt-6 xl:mt-0 xl:ml-4">
-            <h2 className="font-bold text-slate-500 text-2xl lg:text-3xl">
+            <h2 className="px-3 2xl:px-16 font-bold text-slate-500 text-2xl lg:text-3xl">
               Your conversations
             </h2>
             <div className="lg:flex lg:justify-between lg:gap-6">

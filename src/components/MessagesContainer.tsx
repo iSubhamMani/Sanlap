@@ -124,7 +124,7 @@ const MessagesContainer = ({ conversationId }: { conversationId: string }) => {
           )
         }
       >
-        <div className="grid gap-5 px-6 py-8">
+        <div className="grid gap-5 px-3 md:px-6 py-4 md:py-8">
           {messages.map((message, index) => {
             const prevMessage = index === 0 ? null : messages[index - 1];
             const showDate =

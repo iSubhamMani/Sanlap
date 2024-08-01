@@ -9,7 +9,7 @@ const ChatMessage = ({ message }: { message: CustomMessage }) => {
 
   return (
     <div
-      className={`animate-bounceIn flex items-start gap-3 ${
+      className={`animate-bounceIn flex items-start gap-2 md:gap-3 ${
         message.sender._id === info?.uid && "justify-end" && "flex-row-reverse"
       }`}
     >
