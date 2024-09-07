@@ -23,7 +23,7 @@ const ChatsPage = () => {
     <div className="min-h-[100dvh] flex flex-col p-4 md:p-6">
       <header className="px-3 2xl:px-16 mb-2 lg:mb-8">
         <div className="flex items-center gap-4">
-          <Link href={"#"}>
+          <Link href={"http://localhost:5173"}>
             <ArrowLeft className="w-6 h-6 text-black" />
           </Link>
           <h1 className="text-primary text-2xl font-bold tracking-tighter sm:text-3xl xl:text-4xl/none">
