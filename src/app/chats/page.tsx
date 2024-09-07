@@ -10,20 +10,24 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Mail, UserRound } from "lucide-react";
+import { ArrowLeft, Mail, UserRound } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAppSelector } from "@/lib/hooks";
+import Link from "next/link";
 
 const ChatsPage = () => {
   const { info } = useAppSelector((state) => state.user);
   const { invitations } = useAppSelector((state) => state.invitation);
 
   return (
-    <div className="min-h-[100dvh] flex flex-col pt-4 md:pt-6 pb-8">
+    <div className="min-h-[100dvh] flex flex-col p-4 md:p-6">
       <header className="px-3 2xl:px-16 mb-2 lg:mb-8">
-        <div>
+        <div className="flex items-center gap-4">
+          <Link href={"#"}>
+            <ArrowLeft className="w-6 h-6 text-black" />
+          </Link>
           <h1 className="text-primary text-2xl font-bold tracking-tighter sm:text-3xl xl:text-4xl/none">
-            Echo
+            संलाप
           </h1>
         </div>
       </header>
